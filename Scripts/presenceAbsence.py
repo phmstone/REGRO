@@ -110,12 +110,22 @@ print(f"Extracted gene data for {len(taxa_names)} taxa.")
 # ----------------------------------------------------------
 
 # genes come in lots of different spelling variations so need to catch them all 
+# input the list of genes as a string and break it up into a list by the tabs in between 
+geneString = "ndhA	ndhB	ndhC	ndhD	ndhE	ndhF	ndhG	ndhH	ndhI	ndhJ	ndhK	ccsA	cemA	petA	petB	petD	petG	petL	petN	psaA	psaB	psaC	psaI	psaJ	psbA	psbB	psbC	psbD	psbE	psbF	psbH	psbI	psbJ	psbK	psbL	psbM	psbN	psbT	psbZ	rbcL	ycf3	ycf4	rpoA	rpoB	rpoC1	rpoC2	atpA	atpB	atpE	atpF	atpH	atpI	infA	rpl2	rpl14	rpl16	rpl20	rpl22	rpl23	rpl32	rpl33	rpl36	rps2	rps3	rps4	rps7	rps8	rps11	rps12	rps14	rps15	rps16	rps18	rps19	accD	clpP	matK	ycf1	ycf2	rrn4.5	rrn5	rrn16	rrn23	trnA-UGC	trnC-GCA	trnD-GUC	trnE-UUC	trnF-GAA	trnfM-CAU	trnG-GCC	trnG-UCC	trnH-GUG	trnI-CAU	trnI-GAU	trnK-UUU	trnL-CAA	trnL-UAA	trnL-UAG	trnM-CAU	trnN-GUU	trnP-UGG	trnQ-UUG	trnR-ACG	trnR-UCU	trnS-GCU	trnS-GGA	trnS-UGA	trnT-GGU	trnT-UGU	trnV-GAC	trnV-UAC	trnW-CCA	trnY-GUA"
+gene_list = geneString.split('\t')
+# extract the tRNA list
+trna_list = gene_list[83:]
+# extract the rrna list
+rrna_list = gene_list[79:83]
+# extract the protein coding gene list
+geneList = gene_list[:79]
 
-# Replace these example lists with full gene list as needed
-gene_list = ["ndhA", "ndhB", "ndhC", "rbcL"]
-rrna_list = ["rrn16", "rrn23", "rrn4.5", "rrn5"]
-trna_list = ["trnA-UGC", "trnC-GCA", "trnD-GUC"]
-trna_sesamum_list = ["tRNA-Ala (UGC)", "tRNA-Cys (GCA)", "tRNA-Asp (GUC)"]
+# have only seen this style in one genbank file (Sesamum) but it's strange and must be spelled out in full
+trna_sesamum_list = ['tRNA-Ala (UGC)', 'tRNA-Cys (GCA)', 'tRNA-Asp (GUC)', 'tRNA-Glu (UUC)', 'tRNA-Phe (GAA)', 'tRNA-fM (CAU)', 'tRNA-Gly (GCC)', 'tRNA-Gly (UCC)', 'tRNA-His (GUG)', 'tRNA-Ile (CAU)', 'tRNA-Ile (GAU)', 'tRNA-Lys (UUU)', 'tRNA-Leu (CAA)', 'tRNA-Leu (UAA)', 'tRNA-Leu (UAG)', 'tRNA-Met (CAU)', 'tRNA-Asn (GUU)', 'tRNA-Pro (UGG)', 'tRNA-Gln (UUG)', 'tRNA-Arg (ACG)', 'tRNA-Arg (UCU)', 'tRNA-Ser (GCU)', 'tRNA-Ser (GGA)', 'tRNA-Ser (UGA)', 'tRNA-Thr (GGU)', 'tRNA-Thr (UGU)', 'tRNA-Val (GAC)', 'tRNA-Val (UAC)', 'tRNA-Trp (CCA)', 'tRNA-Tyr (GUA)']
+
+# write out alternative rrna gene name formats
+rrna_word_list = ['23S rRNA', '4.5S rRNA', '5S rRNA', '16S rRNA']
+rrn_alternate_list = ['rrn16', 'rrn4.5s', 'rrn5s', 'rrn23s']
 
 # make everything lowercase for case insensitive matching
 gene_list = [g.lower() for g in gene_list]
@@ -166,13 +176,30 @@ for i in range(len(sequence_dict)):
             profile.append("1")
 
     # go through the rRNAs
-    for rrna in rrna_list:
-        if rrna in all_pseudogenes[i]:
-            profile.append("2")
-        elif rrna in all_present_genes[i]:
-            profile.append("0")
-        else:
-            profile.append("1")
+#     for rrna in rrna_list:
+#         if rrna in all_pseudogenes[i]:
+#             profile.append("2")
+#         elif rrna in all_present_genes[i]:
+#             profile.append("0")
+#         else:
+#             profile.append("1")
+            
+    # go through the rRNAs
+    for j in range(len(rrna_list)):
+        found = False
+        for variant_list in [rrn_alternate_list, rrna_word_list, rrna_list]:
+            if variant_list[j] in all_pseudogenes[i]:
+                profile.append("2")
+                found = True
+                break
+        if not found:
+       		for variant_list in [rrn_alternate_list, rrna_word_list, rrna_list]:
+       			if variant_list[j] in all_present_genes[i]:
+       				profile.append("0")
+       				found = True
+       				break
+       	if not found:
+       		profile.append("1")         
 
     # go through the tRNAs
     for j in range(len(trna_list)):
