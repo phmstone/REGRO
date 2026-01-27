@@ -374,7 +374,7 @@ for gene_idx, taxa in enumerate(missing_by_gene):
             "blastn",
             "-db", os.path.join(args.blast_db_dir, accession),
             "-query", query_fasta,
-            "-outfmt", "7 qaccession saccession evalue qstart qend sstart send",
+            "-outfmt", "7 qseqid sseqid evalue qstart qend sstart send",
             "-out", out_file
         ]
 
