@@ -207,12 +207,13 @@ for gene in trna_list:
     trna_no_punct.append(gene_l.replace('-', '').replace('(', '').replace(')', ''))
 
 # ----------------------------------------------------------
-# Extract genes from GenBank files
+# Extract genes from reference GenBank files
 # ----------------------------------------------------------
 
 # make the fasta file directory if it doesn't already exist
 os.makedirs(args.reference_outdir, exist_ok=True)
 
+# track the number of times genes are written per reference genome to avoid duplicates (from the IR)
 genes_written = set()
 
 for gbk in reference_gbk_files:
@@ -251,27 +252,33 @@ for gbk in reference_gbk_files:
                     break
 		
 		# skip if that gene is already dealt with (IR) or not recognised
-        if gene_id is None or gene_id in genes_written:
+        if gene_id is None:
             continue
+        sequenceGeneCombo = (record.id, gene_id)
+        if sequenceGeneCombo in genes_written:
+            continue 
 
-        # write sequence
+        # write sequence to a fasta file
         seq = feature.extract(record.seq)
         outfile = os.path.join(args.reference_outdir, f"{gene_id}.fasta")
-        with open(outfile, "w") as out:
+        # use append so that different reference sequences can be added into the same fasta file
+        with open(outfile, "a") as out:
             out.write(f">{record.id} {gene_id}\n")
             out.write(str(seq) + "\n")
 
-        genes_written.add(gene_id)
+        genes_written.add(sequenceGeneCombo)
 
-# make a lowercase set of genes_written for comparison
-genes_written_lc = set(g.lower() for g in genes_written)
+# make a lowercase set of genes written for comparison (ignore genome IDs)
+genes_written_lc = {gene_id.lower() for _, gene_id in genes_written}
 
 # compare to lowercase gene_list to make warning for genes not found
 missing_refs = set(g.lower() for g in gene_list) - genes_written_lc
+
 if missing_refs:
     print("WARNING: no reference sequence found for:")
     for g in sorted(missing_refs):
         print(f"  {g}")
+
 
 
 # ----------------------------------------------------------
@@ -282,7 +289,7 @@ if missing_refs:
 # make the directory for plastid fasta sequences for accessions with missing genes
 os.makedirs(args.plastid_fasta_dir, exist_ok=True)
 
-
+# make the file name
 for i, accession in enumerate(missing_taxa_ids, start=1):
     outfile = os.path.join(args.plastid_fasta_dir, f"{accession}.fasta")
 
@@ -345,7 +352,6 @@ for fasta_file in os.listdir(args.plastid_fasta_dir):
 # run blast with reference gene sequences on missing data
 # ----------------------------------------------------------
 
-
 # make the directory for blast results to be stored in
 os.makedirs(args.blast_out, exist_ok=True)
 
@@ -353,13 +359,17 @@ for gene_idx, taxa in enumerate(missing_by_gene):
     gene = gene_names[gene_idx]
     query_fasta = os.path.join(args.reference_outdir, f"{gene}.fasta")
 
+    # skip genes with no reference sequences
     if not os.path.exists(query_fasta):
         continue
 
+    # run BLAST for each taxon missing this gene
     for accession in taxa:
-        out_file = os.path.join(args.blast_out, f"{gene}-{accession}.txt")
+        genome_outdir = os.path.join(args.blast_out, accession)
+        os.makedirs(genome_outdir, exist_ok=True)
 
-        # use blastn for nucleotide blast
+        out_file = os.path.join(genome_outdir, f"{gene}.txt")
+
         blast_cmd = [
             "blastn",
             "-db", os.path.join(args.blast_db_dir, accession),
@@ -369,5 +379,6 @@ for gene_idx, taxa in enumerate(missing_by_gene):
         ]
 
         subprocess.run(blast_cmd, check=True)
+
 
 #print("Pipeline complete.")
