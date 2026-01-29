@@ -2,7 +2,7 @@
 # This script:
 # 1. Reads in a multi-sequence .gbk file
 # 2. Parses annotations in the .gbk file by taxon
-# 3. Creates one output multifasta file per gene (specified in gene_list) contaning sequences for all taxa where that gene was annotated as present
+# 3. Creates one output multifasta file per gene (specified in gene_list) containing sequences for all taxa where that gene was annotated as present
 # 4. The multifasta files are not aligned 
 ########################################################################################################################################################
 
