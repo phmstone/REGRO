@@ -1,7 +1,7 @@
 ####################################################################################################
 # This script:
 # 1. Adds reference gene sequences to gene-specific alignment FASTA files
-# 2. Parses blast tabular output files
+# 2. Parses BLAST tabular output files
 # 3. Extracts matching gene regions from plastid genomes
 # 4. Handles strand orientation correctly
 # 5. Appends extracted sequences to alignment files
@@ -13,7 +13,7 @@ import argparse
 import numpy as np
 from Bio import SeqIO
 from Bio.SeqRecord import SeqRecord
-
+from collections import defaultdict  # NEW import for genome isolation
 
 # ---------------------------------------------------------------------------------------------------
 # Command line arguments
@@ -66,74 +66,64 @@ args = parse_args()
 # Gene list
 # ---------------------------------------------------------------------------------------------------
 
-# seperate the genes into an actual list and make everything lowercase for matching ease
+# Separate the genes into a list and make everything lowercase for easier matching
 geneList = "ndhA	ndhB	ndhC	ndhD	ndhE	ndhF	ndhG	ndhH	ndhI	ndhJ	ndhK	ccsA	cemA	petA	petB	petD	petG	petL	petN	psaA	psaB	psaC	psaI	psaJ	psbA	psbB	psbC	psbD	psbE	psbF	psbH	psbI	psbJ	psbK	psbL	psbM	psbN	psbT	psbZ	rbcL	ycf3	ycf4	rpoA	rpoB	rpoC1	rpoC2	atpA	atpB	atpE	atpF	atpH	atpI	infA	rpl2	rpl14	rpl16	rpl20	rpl22	rpl23	rpl32	rpl33	rpl36	rps2	rps3	rps4	rps7	rps8	rps11	rps12	rps14	rps15	rps16	rps18	rps19	accD	clpP	matK	ycf1	ycf2	rrn4.5	rrn5	rrn16	rrn23	trnA-UGC	trnC-GCA	trnD-GUC	trnE-UUC	trnF-GAA	trnfM-CAU	trnG-GCC	trnG-UCC	trnH-GUG	trnI-CAU	trnI-GAU	trnK-UUU	trnL-CAA	trnL-UAA	trnL-UAG	trnM-CAU	trnN-GUU	trnP-UGG	trnQ-UUG	trnR-ACG	trnR-UCU	trnS-GCU	trnS-GGA	trnS-UGA	trnT-GGU	trnT-UGU	trnV-GAC	trnV-UAC	trnW-CCA	trnY-GUA"
-geneList = geneList.lower()
-geneList = geneList.split('\t')
+geneList = geneList.lower().split('\t')
 
 
-# -----------------------------------------------------------------------------------------------------------------------------------
-# build a mapping of genome accessions to FASTA file paths because decimals are sometimes stripped from genbank IDs
-# -----------------------------------------------------------------------------------------------------------------------------------
+# ---------------------------------------------------------------------------------------------------
+# Build a mapping of genome accessions to FASTA file paths
+# ---------------------------------------------------------------------------------------------------
+
 genome_files = {}
 for f in os.listdir(args.genome_dir):
     if f.endswith(".fasta"):
-        name_no_ext = os.path.splitext(f)[0]        # removes .fasta
+        name_no_ext = os.path.splitext(f)[0]        # remove .fasta extension
         genome_files[name_no_ext] = os.path.join(args.genome_dir, f)
 
 
-# -----------------------------------------------------------------------------------------------------------------------------------
+# ---------------------------------------------------------------------------------------------------
 # Add one copy of each reference sequence to the alignment file
-# -----------------------------------------------------------------------------------------------------------------------------------
+# ---------------------------------------------------------------------------------------------------
 
-# make the output directory if it does not already exist
 os.makedirs(args.output_dir, exist_ok=True)
 
-# iterate over the genes
 for gene in geneList:
-    alignment_path = os.path.join(
-        args.output_dir, f"{gene}-alignment-unaligned.fasta")
-    
-    # path to the reference multifasta for this gene
+    alignment_path = os.path.join(args.output_dir, f"{gene}-alignment-unaligned.fasta")
     reference_fasta = os.path.join(args.reference_dir, f"{gene}.fasta")
  
-    # write out the sequences from the reference multifasta to the new file   
-    # only add reference sequences if the alignment file does not already exist
+    # Only add reference sequences if the alignment file does not already exist
     if os.path.exists(reference_fasta) and not os.path.exists(alignment_path):
         with open(alignment_path, "w") as alignment_file:
             for record in SeqIO.parse(reference_fasta, "fasta"):
                 SeqIO.write(record, alignment_file, "fasta")
 
 
-# -----------------------------------------------------------------------------------------------------------------------------------
+# ---------------------------------------------------------------------------------------------------
 # Process blast results
-# -----------------------------------------------------------------------------------------------------------------------------------
+# ---------------------------------------------------------------------------------------------------
 
-# keep track of files with no hits or issues (likely IR problems)
 bigNoHitsList = []
 bigProblemFilesList = []
 
-# list of folders inside blast results directory
 blast_folders = [
     os.path.join(args.blast_dir, d)
     for d in os.listdir(args.blast_dir)
     if os.path.isdir(os.path.join(args.blast_dir, d))
 ]
 
-# loop through each plastid genome blast folder
 for directory in blast_folders:
 
     somethingWrongWithTheseFiles = []
     noHitsFiles = []
 
-    # loop through each gene blast file
     for filename in os.listdir(directory):
         if not filename.endswith(".txt"):
             continue
 
         blastResults = []
 
-        # read blast output
+        # Read BLAST output lines
         with open(os.path.join(directory, filename)) as fh:
             for line in fh:
                 line = line.strip()
@@ -141,134 +131,170 @@ for directory in blast_folders:
                     continue
                 blastResults.append(line)
 
-        # no hits in this file
+        # Skip files with no hits
         if not blastResults:
             noHitsFiles.append(os.path.join(os.path.basename(directory), filename))
             continue
 
-        # split blast hits into columns
+        # Split each line into columns
         tabularResults = [line.split("\t") for line in blastResults]
 
-        # extract gene name from filename
         geneName = os.path.splitext(filename)[0].lower()
 
-        # extract IDs from first hit
-        refSeqID = tabularResults[0][0]   # qseqid
-        genomeID = tabularResults[0][1]   # sseqid
+		# --------------------------------------------------------------------------------------
+        # The blast file may contain hits from multiple genomes - process them independently
+        # --------------------------------------------------------------------------------------
 
-        # clean subject IDs from blast outfmt6 (gb|XXXX.1|)
-        if "|" in genomeID:
-            genomeID = genomeID.split("|")[-2]
-        # strip version number if present
-        genomeID = genomeID.split(".")[0]
+        hits_by_genome = defaultdict(list)
 
-        # lists to store coordinates and strand info
-        geneBounds = []
-        genomeBounds = []
-        strands = []
-
-        # parse each blast hit
         for row in tabularResults:
-            q_start = int(row[3])
-            q_end   = int(row[4])
-            s_start = int(row[5])
-            s_end   = int(row[6])
+            genomeID = row[1]  # qseqid = plastid genome
+            hits_by_genome[genomeID].append(row)
 
-            geneBounds.append([q_start, q_end])
-            genomeBounds.append([s_start, s_end])
+        # --------------------------------------------------------------------------------------
+        # Loop over each genome in the blast file
+        # --------------------------------------------------------------------------------------
+        for genomeID, genome_hits in hits_by_genome.items():
 
-            strand = "+" if s_start < s_end else "-"
-            strands.append(strand)
+            # Clean genome ID from blast formatting (gb|XXXX.1|) and remove version numbers
+            if "|" in genomeID:
+                genomeID = genomeID.split("|")[-2]
+            genomeID = genomeID.split(".")[0]
 
-        # -------------------------------------------------
-        # deal with duplicated hits
-        # -------------------------------------------------
+            # Skip if genome FASTA not found
+            if genomeID not in genome_files:
+                print(f"WARNING: Genome file for {genomeID} not found in {args.genome_dir}. Skipping.")
+                continue
 
-        sorter = {}
-        for q, s, strand in zip(geneBounds, genomeBounds, strands):
-            q_tuple = tuple(q)
-            if q_tuple not in sorter:
-                sorter[q_tuple] = [(s, strand)]
-            else:
-                sorter[q_tuple].append((s, strand))
+            # Extract reference ID (sseqid) from first hit
+            refSeqID = genome_hits[0][1]
 
-        duplicateGeneBounds = [[]]
-        duplicateGenomeBounds = [[]]
+            # Initialize lists for parsing
+            geneBounds = []
+            genomeBounds = []
+            strands = []
 
-        for k, v in sorter.items():
-            for i, (coords, strand) in enumerate(v):
-                if i >= len(duplicateGeneBounds):
-                    duplicateGeneBounds.append([])
-                    duplicateGenomeBounds.append([])
-                duplicateGeneBounds[i].append(list(k))
-                duplicateGenomeBounds[i].append((coords, strand))
+            # Parse each BLAST hit for THIS genome only
+            for row in genome_hits:
+                q_start = int(row[3])
+                q_end   = int(row[4])
+                s_start = int(row[5])
+                s_end   = int(row[6])
 
-        genomeBoundList = []
+                geneBounds.append([q_start, q_end])
+                genomeBounds.append([s_start, s_end])
 
-        for numberSet in range(len(duplicateGeneBounds)):
-            gene_array = np.array(duplicateGeneBounds[numberSet])
-            genome_array = np.array([x[0] for x in duplicateGenomeBounds[numberSet]])
-            strand_list = [x[1] for x in duplicateGenomeBounds[numberSet]]
+                strand = "+" if s_start < s_end else "-"
+                strands.append(strand)
 
-            min_idx = np.unravel_index(np.argmin(gene_array), gene_array.shape)
-            max_idx = np.unravel_index(np.argmax(gene_array), gene_array.shape)
+            # -------------------------------------------------
+            # Handle duplicated hits
+            # -------------------------------------------------
+            sorter = {}
+            for q, s, strand in zip(geneBounds, genomeBounds, strands):
+                q_tuple = tuple(q)
+                if q_tuple not in sorter:
+                    sorter[q_tuple] = [(s, strand)]
+                else:
+                    sorter[q_tuple].append((s, strand))
 
-            s1 = genome_array[min_idx]
-            s2 = genome_array[max_idx]
+            duplicateGeneBounds = [[]]
+            duplicateGenomeBounds = [[]]
 
-            start = min(s1, s2)
-            end = max(s1, s2)
-            strand = strand_list[min_idx[0]]
+            for k, v in sorter.items():
+                for i, (coords, strand) in enumerate(v):
+                    if i >= len(duplicateGeneBounds):
+                        duplicateGeneBounds.append([])
+                        duplicateGenomeBounds.append([])
+                    duplicateGeneBounds[i].append(list(k))
+                    duplicateGenomeBounds[i].append((coords, strand))
 
-            genomeBoundList.append((start, end, strand))
+            genomeBoundList = []
 
-            if end - start > args.ir_cutoff:
-                somethingWrongWithTheseFiles.append(os.path.join(os.path.basename(directory), filename))
+            for numberSet in range(len(duplicateGeneBounds)):
+                gene_array = np.array(duplicateGeneBounds[numberSet])
+                genome_array = np.array([x[0] for x in duplicateGenomeBounds[numberSet]])
+                strand_list = [x[1] for x in duplicateGenomeBounds[numberSet]]
 
-        # -------------------------------------------------
-        # read test plastid genome FASTA
-        # -------------------------------------------------
+                min_idx = np.unravel_index(np.argmin(gene_array), gene_array.shape)
+                max_idx = np.unravel_index(np.argmax(gene_array), gene_array.shape)
 
-        if genomeID not in genome_files:
-            print(f"WARNING: Genome file for {genomeID} not found in {args.genome_dir}. Skipping.")
-            continue
+                s1 = genome_array[min_idx]
+                s2 = genome_array[max_idx]
 
-        genome_record = SeqIO.read(genome_files[genomeID], "fasta")
-        genome_seq = genome_record.seq
+                start = min(s1, s2)
+                end = max(s1, s2)
+                strand = strand_list[min_idx[0]]
 
-        # -------------------------------------------------
-        # extract sequences and append to alignment files
-        # -------------------------------------------------
+                genomeBoundList.append((start, end, strand))
 
-        for start, end, strand in genomeBoundList:
-            start0 = max(start - args.flank - 1, 0)
-            end0 = min(end + args.flank, len(genome_seq))
+                if end - start > args.ir_cutoff:
+                    somethingWrongWithTheseFiles.append(os.path.join(os.path.basename(directory), filename))
 
-            subseq = genome_seq[start0:end0]
+            # -------------------------------------------------
+            # IR duplicate hit check
+            # -------------------------------------------------
+            if len(genomeBoundList) == 2:
+                (start1, end1, strand1), (start2, end2, strand2) = genomeBoundList
+                len1 = end1 - start1
+                len2 = end2 - start2
+                if abs(len1 - len2) < 30:
+                    # Keep only one copy if the hits are almost identical (this will happen if they are in the IR)
+                    genomeBoundList = [genomeBoundList[0]]
 
-            if strand == "-":
-                subseq = subseq.reverse_complement()
+            # -------------------------------------------------
+            # Read genome fasta
+            # -------------------------------------------------
+            genome_record = SeqIO.read(genome_files[genomeID], "fasta")
+            genome_seq = genome_record.seq
 
-            header = (
-                f"{genome_record.id}|{geneName}|"
-                f"{start}-{end}|refSeq:{refSeqID}"
-            )
+            # -------------------------------------------------
+            # Extract sequences and append to alignment files
+            # -------------------------------------------------
+            
+            # make a set to avoid sequences identical in name and content being written out more than once
+            written_seqs = set()
+            
+            for start, end, strand in genomeBoundList:
+                start0 = max(start - args.flanking_region - 1, 0)
+                end0 = min(end + args.flanking_region, len(genome_seq))
 
-            new_record = SeqRecord(subseq, id=header, description="")
+                subseq = genome_seq[start0:end0]
 
-            aln_path = os.path.join(
-                args.output_dir, f"{geneName}-alignment-unaligned.fasta"
-            )
+                if strand == "-":
+                    subseq = subseq.reverse_complement()
 
-            with open(aln_path, "a") as out:
-                SeqIO.write(new_record, out, "fasta")
+                header = (
+                    f"{genome_record.id}|{geneName}|"
+                    f"{start}-{end}|refSeq:{refSeqID}"
+                )
+                
+                # convert DNA sequence to a string
+                seq_str = str(subseq)
+                
+                # do not write out sequences that have already been written out
+                key = (header, seq_str)
+                if key in written_seqs:
+                    continue
+                written_seqs.add(key)
 
+                new_record = SeqRecord(subseq, id=header, description="")
+
+                aln_path = os.path.join(
+                    args.output_dir, f"{geneName}-alignment-unaligned.fasta"
+                )
+
+                with open(aln_path, "a") as out:
+                    SeqIO.write(new_record, out, "fasta")
+
+        # End of genome loop
+
+    # Collect problem/no-hit files
     bigProblemFilesList.append(somethingWrongWithTheseFiles)
     bigNoHitsList.append(noHitsFiles)
 
-
 # -----------------------------------------------------------------------------------------------------------------------
-# write summary files for manual inspection
+# Write summary files for manual inspection
 # -----------------------------------------------------------------------------------------------------------------------
 problem_file_path = os.path.join(args.output_dir, "FilesToCheckAgain.txt")
 nohits_file_path = os.path.join(args.output_dir, "NoHitsFiles.txt")
@@ -280,4 +306,3 @@ with open(problem_file_path, "w") as out:
 with open(nohits_file_path, "w") as out:
     for f in sorted(set(sum(bigNoHitsList, []))):
         out.write(f + "\n")
-
