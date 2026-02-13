@@ -176,6 +176,8 @@ for seq_record in sequence_dict.values():
             	norm_name = f"rrn{number}"
 			# standard normalisation for everything else
             else:
+            	norm_name = re.sub(r'[\s_\-()]', '', norm_name)
+            	# removes s from the end of e.g. rrn16s
             	norm_name = re.sub(r'rrn(\d+(?:\.\d+)?)s$', r'rrn\1', norm_name)
             	norm_name = norm_name.replace("rna", "")
             if norm_name in normalized_targets:
