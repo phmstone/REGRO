@@ -74,7 +74,7 @@ The aligned fasta files will be output into a new directory specified by the use
 This is the least worked on so far!!!!  
 
 
-## aligner.py
+## updateTSV.py
 This script uses the alignments created in `aligner.py` and the presence/absence .TSV file produced by `presenceAbsence.py`.    
 Determines if any changes need to be made to the presence/absence .TSV based on the blast results.   
 Creates a new presence/absence .TSV file and a change log .TSV that records changes made to the original presence/absence .TSV file and why.  
