@@ -243,6 +243,26 @@ for directory in blast_folders:
             # -------------------------------------------------
             genome_record = SeqIO.read(genome_files[genomeID], "fasta")
             genome_seq = genome_record.seq
+            
+            # -------------------------------------------------
+            # Extract species name from FASTA header
+            # -------------------------------------------------            
+            
+            # Expected format: >KU588419.1 Orthilia secunda chloroplast genome ...
+            
+            # split the parts of the name up by spaces
+            description_parts = genome_record.description.split()
+            # assign species name in case parsing does not work
+            speciesName = "Unknown_species"
+			
+			# get the second and third items in the list to make the species name
+            if len(description_parts) >= 3:
+                genus = description_parts[1]
+                species = description_parts[2]
+                # remove non-letter characters from species epithet
+                species = re.sub(r"[^A-Za-z]", "", species)
+                speciesName = f"{genus}_{species}"
+            
 
             # -------------------------------------------------
             # Extract sequences and append to alignment files
@@ -261,7 +281,7 @@ for directory in blast_folders:
                     subseq = subseq.reverse_complement()
 
                 header = (
-                    f"{genome_record.id}|{geneName}|"
+                    f"{genome_record.id}|{speciesName}|{geneName}|"
                     f"{start}-{end}|refSeq:{refSeqID}"
                 )
                 
