@@ -183,7 +183,7 @@ for seq_record in sequence_dict.values():
             if norm_name in normalized_targets:
                 canonical = normalized_targets[norm_name]
 				# if there's pseudo in the gene information, classify it as a pseudogene
-                if "pseudo" in f.qualifiers:
+                if "pseudo" in f.qualifiers or "pseudogene" in f.qualifiers:
                     pseudogenes.add(canonical)
                 else:
                     present_genes.add(canonical)
