@@ -31,7 +31,7 @@ os.environ["SSL_CERT_FILE"] = certifi.where()
 parser = argparse.ArgumentParser(description="Recover missing plastid genes using BLAST")
 parser.add_argument("--input", required=True, help="Presence/absence TSV file")
 parser.add_argument("--email", required=True, help="Email address for NCBI")
-parser.add_argument("--reference-ids", required=True, help="Text file of reference GenBank accessions")
+parser.add_argument("--reference-ids", required=False, default=None, help="Text file of reference GenBank accessions")
 parser.add_argument("--reference-outdir", default="Blast/ReferenceGeneSequences", help="Directory to store reference gene FASTAs")
 parser.add_argument("--reference-gbk-dir", default="Blast/ReferenceGenomes", help="Directory to store reference GenBank files")
 parser.add_argument("--plastid-fasta-dir", default="Blast/PlastidSequences", help="Directory to store plastid FASTA files")
@@ -99,12 +99,23 @@ for taxon_idx, profile in enumerate(presence_absence):
 # ----------------------------------------------------------
 # Read reference accessions and make new references
 # ----------------------------------------------------------
-with open(args.reference_ids) as fh:
-    reference_ids = [line.strip() for line in fh if line.strip()]
+
+# empty list for reference IDs to be filled in from user input reference ID .txt file or from .TSV
+reference_ids = []
+
+# Add in reference IDs from the user input reference ID file if present
+if args.reference_ids:
+    with open(args.reference_ids) as fh:
+        reference_ids = [line.strip() for line in fh if line.strip()]
 
 # Add taxa from the TSV that had all genes present to reference IDs
 reference_ids += complete_taxa_ids
 reference_ids = list(set(reference_ids))  # remove duplicates
+
+# Print error message if the reference ID list is empty
+if not reference_ids:
+    raise ValueError("Error: No reference sequences available. \n"
+                    "Provide --reference-ids .txt file.")
 
 # ----------------------------------------------------------
 # Download reference GenBank files
@@ -146,6 +157,7 @@ for gene in trna_list:
     trna_underscore.append(gene_l.replace('-', '_'))
     trna_bracket.append(gene_l.replace('-', '(') + ")")
     trna_no_punct.append(gene_l.replace('-', '').replace('(', '').replace(')', ''))
+
 
 # ----------------------------------------------------------
 # Extract genes from reference GenBank files
@@ -203,6 +215,25 @@ for gbk in reference_gbk_files:
             out.write(str(feature.extract(record.seq)) + "\n")
 
         genes_written.add(seq_combo)
+
+
+# ----------------------------------------------------------
+# Check that all genes have at least one reference sequence
+# ----------------------------------------------------------
+
+missing_reference_genes = []
+
+for gene in gene_names:
+    fasta_path = os.path.join(args.reference_outdir, f"{gene}.fasta")
+    if not os.path.exists(fasta_path) or os.path.getsize(fasta_path) == 0:
+        missing_reference_genes.append(gene)
+        
+if missing_reference_genes:
+    for gen in missing_reference_genes:
+        raise ValueError("ERROR: the following genes have no reference sequences:\n" +
+        "\n".join(missing_reference_genes) +
+        "\nAdd reference genomes containing these genes or remove them from the gene list.")
+
 
 # ----------------------------------------------------------
 # Download plastid FASTA for missing taxa
