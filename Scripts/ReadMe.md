@@ -38,7 +38,7 @@ There is the option to produce multifastas by gene for coding sequences/intron f
 ## heatMapPlot.py
 This script takes the output .TSV from `presenceAbsence.py` as input and makes a "heatmap" plot showing gene status for each taxon as a .png file.   
 The output file name can be given on the command line or the file will automatically called `heatmapPlot.png`.    
-This plot relies solely the annotations from the .TSV file, which can be manually edited.    
+This plot relies solely on the presence/absence data from the .TSV file, which can be manually edited.    
 
 ## blastPresenceAbsence.py
 This script uses the .TSV generated from `presenceAbsence.py` and a list of genbank IDs to use as plastid gene reference sequences input by the user. 
