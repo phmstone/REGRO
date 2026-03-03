@@ -34,12 +34,14 @@ parser.add_argument("--tsv", help="Output TSV file for gene presence/absence")
 # Optional gene list file
 parser.add_argument("--gene_file", help="Optional file containing one gene per line (overrides default list)")
 # nexus block file 
-parser.add_argument("-n", "--nexus", help="Optional Nexus-style text block output")
+parser.add_argument("--nexus", help="Optional Nexus-style text block output")
 # multifasta output directories
 parser.add_argument("--outdir", default="PresentGeneMultiFastas",
                     help="Directory to store full gene sequences (default: PresentGeneMultiFastas)")
 parser.add_argument("--coding_outdir", default="PresentCodingSeqMultiFastas",
                     help="Directory to store coding sequences (default: PresentCodingSeqMultiFastas)")
+# gene alias file
+parser.add_argument("--alias_file", help="Optional gene alias file: canonical_name <tab> synonym")
 
 # Parse the arguments
 args = parser.parse_args()
@@ -90,7 +92,43 @@ for g in gene_list:
     norm = g.lower()
     norm = re.sub(r'[\s_\-()]', '', norm)  # remove punctuation, underscores, hyphens, parentheses
     norm = norm.replace("rna", "")          # remove "rna" from names
-    normalized_targets[norm] = g            # mapping normalized back to the canonical names
+    normalized_targets[norm] = g            # mapping normalised back to the canonical names
+
+# deal with the alias file if it was included
+if args.alias_file:
+    with open(args.alias_file) as af:
+        for line in af:
+            # remove trailing whitespace 
+            line = line.strip()
+            # ignore the comments
+            if not line or line.startswith("#"):
+                continue
+            parts = line.split()
+            # if the line is not separated by one tab then just skip and ignore it
+            if len(parts) != 2:
+                print(f"Skipping malformed alias line: {line}")
+                continue
+            # in the file the canonical name is separated by the synonym by one line
+            canonical, synonym = parts
+            # normalise the canonical names
+            norm_canon = canonical.lower()
+            norm_canon = re.sub(r'[\s_\-()]', '', norm_canon)
+            norm_canon = norm_canon.replace("rna", "")
+            # throws an error if the normalised canonical name is not in the normalised gene list
+            if norm_canon not in normalized_targets:
+                print(f"Warning: canonical '{canonical}' not in gene list")
+                continue
+            canonical = normalized_targets[norm_canon] 
+            # Normalize synonym exactly like GenBank names (is how they will be normalised later on when reading .gbk file)
+            norm_syn = synonym.lower()
+            norm_syn = re.sub(r'[\s_\-()]', '', norm_syn)
+            norm_syn = norm_syn.replace("rna", "")
+            # throw an error if normalised synonyms are written to two canonical names
+            if norm_syn in normalized_targets:
+            	print(f"Warning: synonym '{synonym}' overwrites existing mapping, check the alias file for duplicate synonyms")
+            # Add synonym into main lookup dictionary
+            normalized_targets[norm_syn] = canonical
+    print(f"Alias file loaded. Total recognized names: {len(normalized_targets)}")
 
 # maybe cut this
 print(f"Tracking {len(normalized_targets)} genes.")

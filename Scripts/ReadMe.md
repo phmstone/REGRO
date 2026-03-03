@@ -30,6 +30,8 @@ This script converts the annotations present in genbank files to a TSV with a co
 It takes the big genbank file output by `fetchGenbank.py` as input. The .gbk file must be specified on the command line as input.  
 The value entered in the output TSV represents the status of the gene in that organism (0 = present, 1 = missing, 2 = pseudogene).   
 The name of the output .TSV must be specified on the command line.    
+A gene alias file can be provided on the command line to enable genes called very different things (e.g. pafI/ycf3) to be recognised as the same gene with `--alias_file`.   
+In the gene alias file the canonical name and the synonym should be on the same line separated by a tab. An example file, `gene_alias.txt` is included.
 A .txt file that gives presence/absence data in the correct format for inserting into a nexus file for character state mapping in e.g. Mesquite can be produced.    
 A default gene list is provided in the script, but an input of chosen plastid genes can be used. The genes should be written in a .txt file with one gene per line.   
 By default, all genes annotated as present have their full gene sequences removed and put into multifasta files by gene.   
