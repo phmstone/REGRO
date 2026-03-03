@@ -44,7 +44,7 @@ The following arguments are required:
 * `--input` The name of the file containing the list of genbank IDs.
 * `--output` The name of the output genbank file.    
 
-Example command: `python3 fetchGenbank.py --email your.NCBI.account@email.address --input EricalesGenbankIDs.txt --output Ericales.gbk`   
+**Example command:** `python3 fetchGenbank.py --email your.NCBI.account@email.address --input EricalesGenbankIDs.txt --output Ericales.gbk`   
 
 This will create a multi-sequence genbank file in the directory `Outputs`.    
 
@@ -57,7 +57,7 @@ The genes tested can be determined by the user. By default 113 genes canonically
 
 Use `presenceAbsence.py` to create a .TSV showing whether the "test" genes are annotated as present, absent, or pseudogenes in the downloaded genbank file.
 
-### Inputs
+#### Inputs
 Other genes or a subset of genes can be tested with the flag `gene_file`. Input a text file of gene names to bes tested, with one gene name on each line. 
 An example file for ribosomal protein genes is included (`ribosomalProteinGenes.txt`).    
 Most alternative spellings or formats of gene names are handled within this script's normalisation. 
@@ -65,7 +65,7 @@ If accessions you want to test contain very different names for the same gene (e
 The alias file is a text file containing the canonical gene name and the synonym on the same line separated by a tab.    
 The alias file should be called with the flag `--alias_file`. An example is included here `gene_alias.txt`.    
 
-### Outputs
+#### Outputs
 The main output is the TSV containing a row for each taxon, one column for genbank ID, one column for species name, and then a column for each gene.    
 The genes are marked as present, absent, or pseudogenes according to the given annotations, where 0 = present, 1 = absent, and 2 = pseudogene.    
 A text file showing presence/absence data that can be inserted into a nexus file for character state mapping in e.g. [Mesquite](https://www.mesquiteproject.org/) can be produced with `--nexus`.    
@@ -85,7 +85,7 @@ The following arguments are optional:
 * `--outdir` Output directory for whole gene sequences.
 * `--coding_outdir` Output directory for exon only gene sequences.
 
-Example command: `python3 presenceAbsence.py --input Ericales.gb --tsv EricalesPresenceAbsence.tsv --alias_file gene_alias.txt --outdir presentGeneSequences --coding_outdir --presentGeneCodingSequences`   
+**Example command:** `python3 presenceAbsence.py --input Ericales.gb --tsv EricalesPresenceAbsence.tsv --alias_file gene_alias.txt --outdir presentGeneSequences --coding_outdir --presentGeneCodingSequences`   
 
 
 
@@ -101,8 +101,43 @@ The following argument is required:
 The following argument is optional:
 * `-o` The name of the .png file of the plot.
 
-Example command: `python3 heatMapPlot.py EricalesPresenceAbsence.tsv -o EricalesHeatMap.png`   
+**Example command:** `python3 heatMapPlot.py EricalesPresenceAbsence.tsv -o EricalesHeatMap.png`   
 
 
-## V. 
+## V. Finding other sequences with BLAST
+
+Sometimes not all the genes present in a genome are successfully annotated, this is especially true for pseudogenes. With BLAST we can uncover genes that may have been missed by the original annotation method.     
+To save time and computing power, this script only uses BLAST to pull out genes that are annotated as pseudogenes or are missing. Genes annotated as present are assumed to be annotated correctly.    
+This script downloads the plastid genomes of all sequences with at least one gene annotated as missing/pseudogenised, and makes databases from the fasta files.    
+
+#### Inputs
+Reference sequences should be supplied to act as query sequences for the BLAST searches. The reference sequences should have functional copies of all the genes you are testing. Ideally they are closely related taxonomically.    
+An example file containing genbank IDs for sequences containing all 113 of the default angiosperm plastid genes is included (`referenceIDs.txt`)    
+The reference sequences should be identified by their genbank IDs and the reference sequence file should have one genbank ID per line in a .txt file.    
+If some of the sequences supplied in the original genbank ID list for testing contain functional copies of all the genes, then this script will enable them to be used as references for BLAST.
+
+#### Outputs
+Fasta files from the genbank sequences in the original .txt file list, BLAST directories, BLAST results, and .gbk files for the "reference" sequences are all produced and organised in directories.     
+Fasta files, BLAST database files, and .gbk files are all named after the relevant genbank ID. BLAST results are stored in directories named after the genbank ID that was used to make the BLAST database, and individual results files are named by gene name.    
+By default, a new directory called `Blast` is created for all the output files and directories to go into, but this can be changed.
+
+The following arguments are required:
+* `--input` The presence/absence .TSV file downloaded in the previous step
+* `--email` The email address associated with your NCBI account.
+
+The following arguments are optional:
+* `--reference-ids` A text file containing genbank IDs known to have all genes of interest separated by a new line. Optional because if one of the IDs in the input .TSV contains all genes of interest, that genbank ID can be used as a "reference".
+* `--blast-type` Choose between tblastx or blastn (defualt is blastn).
+* `--reference-outdir` A directory to store reference gene FASTAs (default name is `Blast/ReferenceGeneSequences`).    
+* `--reference-gbk-dir` A directory to store reference genbank files (default name is `Blast/ReferenceGenomes`)
+* `--plastid-fasta-dir` A directory to store FASTA files of the GenBank IDs being made into BLAST databases (default name is `Blast/PlastidSequences`).
+* `--blast-db-dir` A directory to store BLAST databases (default name is `Blast/Databases`).
+* `--blast-out` A directory to BLAST results (default name is `Blast/Results`).
+
+**Example command:** `python3 presenceAbsence.py --input EricalesPresenceAbsence.tsv --email your.NCBI.account@email.address --reference-ids referenceIDs.txt --blast-type blastn`   
+
+
+
+
+
 
