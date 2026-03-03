@@ -14,6 +14,7 @@
 import argparse
 import re
 import os
+import sys 
 from Bio import SeqIO
 
 # --------------------------------------------------------------------------------------------------------------
@@ -86,13 +87,13 @@ else:
     gene_list = default_gene_string.split("\t")
     print("Using default angiosperm plastid gene list")
 
-# Normalize gene names for matching
-normalized_targets = {}
+# normalise gene names for matching
+normalised_targets = {}
 for g in gene_list:
     norm = g.lower()
     norm = re.sub(r'[\s_\-()]', '', norm)  # remove punctuation, underscores, hyphens, parentheses
     norm = norm.replace("rna", "")          # remove "rna" from names
-    normalized_targets[norm] = g            # mapping normalised back to the canonical names
+    normalised_targets[norm] = g            # mapping normalised back to the canonical names
 
 # deal with the alias file if it was included
 if args.alias_file:
@@ -115,23 +116,35 @@ if args.alias_file:
             norm_canon = re.sub(r'[\s_\-()]', '', norm_canon)
             norm_canon = norm_canon.replace("rna", "")
             # throws an error if the normalised canonical name is not in the normalised gene list
-            if norm_canon not in normalized_targets:
+            if norm_canon not in normalised_targets:
                 print(f"Warning: canonical '{canonical}' not in gene list")
                 continue
-            canonical = normalized_targets[norm_canon] 
-            # Normalize synonym exactly like GenBank names (is how they will be normalised later on when reading .gbk file)
+            canonical = normalised_targets[norm_canon] 
+            # normalise synonym exactly like GenBank names (is how they will be normalised later on when reading .gbk file)
             norm_syn = synonym.lower()
             norm_syn = re.sub(r'[\s_\-()]', '', norm_syn)
             norm_syn = norm_syn.replace("rna", "")
-            # throw an error if normalised synonyms are written to two canonical names
-            if norm_syn in normalized_targets:
-            	print(f"Warning: synonym '{synonym}' overwrites existing mapping, check the alias file for duplicate synonyms")
+            # what happens if a gene name is already included in the gene list or included twice in the alias list?
+            if norm_syn in normalised_targets:
+                existing = normalised_targets[norm_syn]
+                # error messge if normalised synonyms from alias file map to two canonical gene names
+                if existing != canonical:
+                    sys.exit(f"\nERROR: Alias conflict detected.\n"
+                        f"synonym '{synonym}' maps to both "
+                        f"'{existing}' and '{canonical}'. \n"
+                        f"Check and fix the alias file.")
+                else:
+                    # synonym given normalises to the gene name, then just carry on 
+                    print(f"Warning: synonym '{synonym}' overwrites existing mapping, check the alias file for duplicate synonyms")
+                    print(f"This usually means that an alternative spelling/format was simply normalised to a gene name already included in the gene list")
+                    continue
             # Add synonym into main lookup dictionary
-            normalized_targets[norm_syn] = canonical
-    print(f"Alias file loaded. Total recognized names: {len(normalized_targets)}")
+            normalised_targets[norm_syn] = canonical
+    print(f"Alias file loaded.")
 
 # maybe cut this
-print(f"Tracking {len(normalized_targets)} genes.")
+# the number in {len(normalised_targets)} is higher if an alias file is used because it includes synonyms
+print(f"Tracking {len(gene_list)} genes.")
 
 # --------------------------------------------------------------------------------------------------------------
 # Read GenBank file
@@ -224,9 +237,9 @@ for recordID, record in records.items():
             norm_name = re.sub(r'rrn(\d+(?:\.\d+)?)s$', r'rrn\1', norm_name)
             norm_name = norm_name.replace("rna", "")
         # if no name match then move on
-        if norm_name not in normalized_targets:
+        if norm_name not in normalised_targets:
             continue
-        canonical_name = normalized_targets[norm_name]
+        canonical_name = normalised_targets[norm_name]
 
         # if there's pseudo in the gene information, classify it as a pseudogene
         if "pseudo" in feature.qualifiers or "pseudogene" in feature.qualifiers:
