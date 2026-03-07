@@ -3,7 +3,7 @@
 ### What genes should I include for studying chloroplast genome degradation?
 The default gene list built into the the pipeline contains 113 plastid genes, the "canonical" full set for angiosperms. 
 It's best to include more genes when studying chloroplast genome degradation as this will improve the resolution at which you can see genome degradation.
-Gene lists for "canonical" full sets of chloroplast genes for gymnosperms, monilophytes, mosses and hornworts, liverworts, and green algae are provided.
+Gene lists for "canonical" full sets of genes for monilophytes, bryophytes, and green algae plastid genomes and the angiosperm mitochondrial genome are provided.
 
 ### Do I have to use chloroplast genome data?
 No, this pipeline should work with any type of genetic data. 
@@ -12,12 +12,15 @@ If using nuclear data sets, it's recommended to run on and HPC for storage limit
 
 ### Will all the different spellings of my input gene list be recognised?
 The normalisation written into the scripts handles case differences and the presence or lack of many punctuation marks.
-If in doubt about alternative spellings of gene names add them to an alias file.
+If in doubt about alternative spellings of gene names, add them to an alias file.
+
+### What if my "reference" sequence doesn't include all the genes I want to study?
+Choose a different sequence that does contain the full complement of genes, or remove genes missing from the reference from the gene list.
 
 ### I want to use the pipeline but my sequences aren't on GenBank. Will it still work?
 Yes, as long as you have copies of the sequences in .fasta and .gbk format with the same name (except for the file extension). 
 Put your own sequences in the folders where they would go had they been on genbank. 
-It may be easier to run the pipeline through once with sequences from genbank in order to see where to put these species.
+It may be easier to run the pipeline through once with sequences from genbank in order to see where to put your own.
 
 ### How accurate is the updated presence/absence TSV?
 The TSV output `UpdateTSV.py` from will not be an accurate assessment of whether genes found are present in full if the alignments are used straight from `aligner.py`. 

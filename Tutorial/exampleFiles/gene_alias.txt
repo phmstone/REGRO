@@ -1,0 +1,5 @@
+# canonical_name	synonym
+petA	cytochrome_f
+ycf3	pafI
+ycf4	pafII
+psbi	psb1
