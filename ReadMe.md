@@ -36,7 +36,7 @@ Python packages can be installed with [pip](https://pypi.org/project/pip/), as s
 ## Software necessary for full pipeline
 * BLAST
 * MAFFT
-* Exonerate
+* Exonerate    
 All can be installed with [Conda](https://anaconda.org/), [Homebrew](https://brew.sh/), or manually and then added to your $PATH. 
 If you are planning to run this on an HPC then check if these tools are available as modules, as installation may be unnecessary.
 If installing Exonerate with Homebrew, use the bioinformatics specific channel before installing.
