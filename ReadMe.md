@@ -1,8 +1,8 @@
 # 🌿🧬🌷 Plastid genome content project 🌷🧬🌿
 
 This pipeline is a suite of python scripts designed to investigate plastid genome degradation. 
-Using an input list of genbank IDs, the annotations will be parsed to produce alignments of present genes and a report of gene presence/absence/pseudogenisation.
-Further scripts are included to find genes and gene fragments that may have been missed by the annotations on the genbank files.
+Using an input list of GenBank IDs, the annotations will be parsed to produce alignments of present genes and a report of gene presence/absence/pseudogenisation.
+Further scripts are included to find genes and gene fragments that may have been missed by the annotations on the GenBank files.
 Go to the [tutorial](https://github.com/phmstone/PlastidGenomeContent/tree/main/Tutorial) for a guide on how to run it.
 If you have questions check the [FAQ page](https://github.com/phmstone/PlastidGenomeContent/blob/main/Tutorial/FAQs.md).
 
@@ -43,8 +43,8 @@ If you are planning to run this on an HPC then check if these tools are availabl
 If installing Exonerate with Homebrew, use the bioinformatics specific channel before installing.
 
 ## Inputs needed
-* List of "test" genbank IDs in .txt file, one ID per line
-* List of reference genbank IDs that contain all plastid genes in .txt file, one ID per line
+* List of "test" GenBank IDs in .txt file, one ID per line
+* List of reference GenBank IDs that contain all plastid genes in .txt file, one ID per line
 
 The rest of the files needed will be generated innately.
 
