@@ -7,9 +7,9 @@ Gene lists for "canonical" full sets of genes for monilophytes, bryophytes, and 
 
 ### Do I have to use chloroplast genome data?
 No, this pipeline should work with any type of genetic data. 
-Other organellar data sets, such as mitochondrial genomes, will work well.
-If using nuclear data sets, it's recommended to run on and HPC for storage limitations. 
-If your reads are not yet assembled, try using[PhyloHerb](https://github.com/lmcai/PhyloHerb) instead.
+Other organellar data sets, such as mitochondrial genomes, should work well.
+If using nuclear data sets, it's recommended to run on an HPC for storage reasons. 
+If your reads are not yet assembled, try using [PhyloHerb](https://github.com/lmcai/PhyloHerb) instead.
 
 ### Will all the different spellings of my input gene list be recognised?
 The normalisation written into the scripts handles case differences and the presence or lack of many punctuation marks.
