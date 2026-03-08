@@ -66,25 +66,12 @@ print(f"Total unique IDs accessions found: {len(genbank_ids)}")
 
 
 # -----------------------------
-# Set up directory structure
-# -----------------------------
-
-# Make output directory if it doesn't exist (analogous to mkdir -p)
-output_dir = "Outputs"
-os.makedirs(output_dir, exist_ok=True)
-
-# unsure if this is the best way to do things at all: if user adds in output file with a long path this will mess it up
-# can be cut out quite easily 
-# remove lines 85-86 output_file = os.path.join(output_dir, args.output)
-# change line 91 with "open(output_file, "w") as out_handle: " back to args.output
-
-# -----------------------------
 # Download records
 # -----------------------------
 print("1 s delay between requests so genbank does not crash")
 
 # putting the output file in the output directory made in the above chunk (if does not already exist)
-output_file = os.path.join(output_dir, args.output)
+output_file = os.path.join(args.output)
 
 # write all the .gbk files from each accession into one big .gbk file which will be the output file
 with open(output_file, "w") as out_handle:
