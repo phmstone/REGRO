@@ -30,7 +30,11 @@ It may be easier to run the pipeline through once with sequences from genbank in
 The TSV output `UpdateTSV.py` from will not be an accurate assessment of whether genes found are present in full if the alignments are used straight from `aligner.py`. 
 It is unlikely that a gene will be called as present if using the output from aligner.py to feed straight into `UpdateTSV.py` as it was written to be conservative and has stringent requirements in order to call a gene as "present". 
 The similarity and coverage thresholds can be lowered by the user but proper checking of all the alignments is necessary to make sure that all sequences are in frame. 
-The output TSV can also be edited manually.
+The output TSV can also be edited manually to reflect changes in gene status discovered by manual editing.
+
+## Does this test if detected tRNA genes have functional anticodons?
+No. The pipeline uses similarity and percentage coverage of the reference sequence only to call non-coding protein genes' status. 
+I recommend you look into using [tRNAscan-SE](https://github.com/UCSC-LoweLab/tRNAscan-SE) in addition to pipeline if you need to know whether your the tRNA genes have functional anticodons.
 
 ### Can I change the text size, colours, and legend position for the heat map figures?
 Formatting changes to the heat map figures can be made by editing the `heatMapPlot.py` script directly. 
