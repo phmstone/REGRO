@@ -28,7 +28,7 @@ parser = argparse.ArgumentParser(description="Extract chloroplast genes: presenc
 # input GenBank file
 parser.add_argument("--input", required=True, help="Input GenBank (.gbk) file")
 # TSV output
-parser.add_argument("--tsv", help="Output TSV file for gene presence/absence")
+parser.add_argument("--tsv", required=True, help="Output TSV file for gene presence/absence")
 
 
 # Optional arguments
