@@ -26,7 +26,7 @@ parser = argparse.ArgumentParser(description="Update presence/absence TSV based 
 parser.add_argument("--ogTSV", required=True,
                     help="Original presence/absence TSV file")
 
-parser.add_argument("--alignDir", default="alignments",
+parser.add_argument("--alignDir", required=True,
                     help="Directory containing gene alignment folders (default: alignments)")
 
 parser.add_argument("--outTSV", default="updatedPA.tsv",

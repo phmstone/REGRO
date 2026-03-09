@@ -218,9 +218,9 @@ A change log file is output, where each line shows the old and new values and re
 
 The following arguments are required:
 * `--ogTSV` The original presence/absence .TSV created from GenBank annotations.
+* `--alignDir` The directory containing aligned multifasta files produced in the previous step.
 
 The following arguments are optional:
-* `--alignDir` The directory containing aligned multifasta files produced in the previous step (default is `alignedMultiFastas`).
 * `--outTSV` The updated presence/absence TSV file name (default is `updatedPA.tsv`)
 * `--changeLog` The file name for the log TSV recording changes made (default is `changeLog.tsv`)
 * `--minCov` The minimum coverage needed to a reference sequence for a gene to be called as present (default is `0.95`).
