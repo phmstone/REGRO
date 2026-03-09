@@ -4,11 +4,12 @@ This pipeline is a suite of python scripts designed to investigate plastid genom
 Using an input list of GenBank IDs, the annotations will be parsed to produce alignments of present genes and a report of gene presence/absence/pseudogenisation.
 Further scripts are included to find genes and gene fragments that may have been missed by the annotations on the GenBank files.
 Go to the [tutorial](https://github.com/phmstone/PlastidGenomeContent/tree/main/Tutorial) for a guide on how to run it.
-If you have questions check the [FAQ page](https://github.com/phmstone/PlastidGenomeContent/blob/main/Tutorial/FAQs.md).
+If you have questions, please check the [FAQ page](https://github.com/phmstone/PlastidGenomeContent/blob/main/Tutorial/FAQs.md) before raising an issue.
 
 
 The pipeline is designed for users who are comfortable in the command line environment.
-Some useful tutorials for biologists getting started using the command line can be found [here](https://github.com/mossmatters/introToCmdLine/blob/master/introToCmdLine.pdf) and [here](https://www.hadriengourle.com/tutorials/command_line/).
+Some useful tutorials for biologists getting started using the command line can be found [here](https://github.com/mossmatters/introToCmdLine/blob/master/introToCmdLine.pdf) and [here](https://datacarpentry.github.io/shell-genomics/). 
+Work through these first if you feel you need more experience before using this pipeline.
 
 
 ## Installation
