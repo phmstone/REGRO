@@ -18,6 +18,10 @@ If in doubt about alternative spellings of gene names, add them to an alias file
 ### How many alternative spellings/names can be added to the alias file?
 As many as you like.
 
+### How do I know if the sequences I want to use as references have all genes in my gene list annotated as present?
+Use `fetchGenbank.py` and `presenceAbsence.py` with an input of the gene list you want to use and a list of GenBank IDs for the taxa you are considering using as references. 
+The outputs of `presenceAbsence.py` will show which taxa contain all genes in your gene list and are suitable to be used as references.
+
 ### What if my "reference" sequence doesn't include all the genes I want to study?
 Choose a different sequence that does contain the full complement of genes, or remove genes missing from the reference from the gene list.
 
@@ -32,7 +36,7 @@ It is unlikely that a gene will be called as present if using the output from al
 The similarity and coverage thresholds can be lowered by the user but proper checking of all the alignments is necessary to make sure that all sequences are in frame. 
 The output TSV can also be edited manually to reflect changes in gene status discovered by manual editing.
 
-## Does this test if detected tRNA genes have functional anticodons?
+### Does this test if detected tRNA genes have functional anticodons?
 No. The pipeline uses similarity and percentage coverage of the reference sequence only to call non-coding protein genes' status. 
 I recommend you look into using [tRNAscan-SE](https://github.com/UCSC-LoweLab/tRNAscan-SE) in addition to pipeline if you need to know whether your the tRNA genes have functional anticodons.
 
