@@ -30,6 +30,12 @@ Yes, as long as you have copies of the sequences in .fasta and .gbk format with 
 Put your own sequences in the folders where they would go had they been on genbank. 
 It may be easier to run the pipeline through once with sequences from genbank in order to see where to put your own.
 
+### Will this pipeline recover genes with trans-spliced introns?
+In angiosperm chloroplast genomes, _rps12_ is the only gene with trans-spliced introns. 
+Alignments for genes with trans-spliced will take more manual curation, but if `blastProcessing.py` is used then the full sequence should be recovered.
+If `blastProcessing-singleSeq.py` is used, then the whole gene will not be recovered. 
+As this script extracts the longest sequence the different exon(s) could be extracted from different sequences.
+
 ### How accurate is the updated presence/absence TSV?
 The TSV output `UpdateTSV.py` from will not be an accurate assessment of whether genes found are present in full if the alignments are used straight from `aligner.py`. 
 It is unlikely that a gene will be called as present if using the output from aligner.py to feed straight into `UpdateTSV.py` as it was written to be conservative and has stringent requirements in order to call a gene as "present". 
