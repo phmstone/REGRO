@@ -61,18 +61,31 @@ The script outputs a directory `Blast` (can be renamed by the user) with five su
 
 ## blastProcessing.py
 This script uses the blast results generated from `blastPresenceAbsence.py` to generate multifasta files for all of the genes tested.  
-The multifasta files for each gene contain sequences from the reference plastid sequences as outlined in `blastPresenceAbsence.py` and sequences from the test plastid genomes that were identified as having high similarity to the gene with blast searches.  
+The multifasta files for each gene contain sequences from the reference plastid sequences as outlined in `blastPresenceAbsence.py` and sequences from the test plastid genomes that were identified as having high similarity to the reference genes with blast searches.  
 The sequences in the multifasta file from the test plastid genomes are labelled with the sequence coordinates and the reference sequence that was used to find that specific hit.  
 Test plastid - gene combinations that had no hits found with blast are output to `NoHitsFiles.txt`.  
 Exceptionally long blast hits are are not written out to the multifasta files, but the .txt blast result file is flagged and written to `filesToCheckAgain.txt`.  
 Inputs are directories containing blast results, reference gene sequences, and test plastid fasta files.   
+This script merges blast hits together based on the start and end site of the "first" and "last"in the plastid genome sequence. 
 All of the above directories are generated inside `Blast` by `blastPresenceAbsence.py` automatically and these directories are set as defaults in the script.  
 An output directory name can be specified, or the multifasta files and .txt flagging files will be put in a directory called `unalignedMultifastas`.  
 The threshold for how long a blast hit has to be to be flagged can be adjusted with `--ir-cutoff` but the default is 5000.  
 The number of base pairs flanking the blast hit to be included in the final multifasta file can be specified hit with `--flanking-region`, but the default is set to 0.  
+
+## blastProcessing-singleSeq.py    
+This script runs in a similar way to `blastProcessing.py`, but processes the blast hits differently and has a slightly different output.
+This script uses the blast results generated from `blastPresenceAbsence.py` to generate multifasta files for all of the genes tested.  
+The multifasta files for each gene contain sequences from the reference plastid sequences as outlined in `blastPresenceAbsence.py` and sequences from the test plastid genomes that were identified as having high similarity to the reference genes with blast searches.  
+The sequences in the multifasta file from the test plastid genomes are labelled with the sequence coordinates and the reference sequence that was used to find that specific hit.  
+Unlike `blastProcessing.py`, this script merges blast hits together based on the size of the gaps in between the hits. 
+Inputs are directories containing blast results, reference gene sequences, and test plastid fasta files.   
+All of the above directories are generated inside `Blast` by `blastPresenceAbsence.py` automatically and these directories are set as defaults in the script.  
+An output directory name can be specified, or the multifasta files and .txt flagging files will be put in a directory called `unalignedMultifastas`.  
+The maximum distance in bp between two hits to be merged into one can be controlled with `--merge-gap`, the default is set to 1000.
+This script will only ever return one sequence per gene/species combination; the longest one possible with the specified merge gap allowance.
   
 ## aligner.py
-This script aligns the files in `unalignedMultifastas`output by `blastProcessing.py`.  
+This script aligns the files in `unalignedMultifastas`output by `blastProcessing.py` or `blastProcessing-singleSeq.py`.  
 Requires MAFFT to be installed into the user's PATH or able to be called on the command line.  
 The directory containing the multifastas to be aligned needs to be specified in `--input`.  
 The aligned fasta files will be output into a new directory specified by the user with `--output`.  

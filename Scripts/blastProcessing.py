@@ -29,24 +29,25 @@ def parse_args():
             "Extract gene sequences from plastid genomes using blast results "
             "and append them to gene-specific alignment FASTA files."))
 
-    parser.add_argument("--blast-dir", default="Blast/Results", help="Directory containing blast result subfolders")
+    # Directory containing BLAST result subfolders
+    parser.add_argument("--blast-dir", default="Blast/Results")
 
-    parser.add_argument("--reference-dir", default="Blast/ReferenceGeneSequences", help="Directory containing reference gene FASTA files")
+    # Directory containing reference gene FASTA files
+    parser.add_argument("--reference-dir", default="Blast/ReferenceGeneSequences")
 
-    parser.add_argument("--genome-dir", default="Blast/PlastidSequences", help="Directory containing test plastid genome FASTA files")
+    # Directory containing plastid genome FASTA files
+    parser.add_argument("--genome-dir", default="Blast/PlastidSequences")
 
-    parser.add_argument("--output-dir", required=True, help="Directory for output alignment FASTA files")
+    # Output directory for gene-specific alignment FASTA files
+    parser.add_argument("--output-dir", required=True)
 
+    # Optional flanking region to extract around BLAST hits
+    parser.add_argument("--flanking-region", type=int, default=0,
+                        help="Number of bases to extract upstream and downstream of merged hit, default = 0.")
+
+    # How long hits are flagged 
     parser.add_argument(
-        "--flanking-region",
-        type=int,
-        default=0,
-        help="Number of base pairs to extract on each side of blast hit (default: 0)")
-
-    parser.add_argument(
-        "--ir-cutoff",
-        type=int,
-        default=5000,
+        "--ir-cutoff", type=int, default=5000,
         help="Maximum expected gene length; larger hits are flagged (default: 5000)")
 
     return parser.parse_args()

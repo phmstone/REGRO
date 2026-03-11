@@ -171,8 +171,11 @@ The results from the BLAST searches can be used to extract putative gene sequenc
 Pseudogenes annotated on GenBank are not extracted and put into the alignments here, as they should have sufficient homology to be pulled out with this approach.   
 Sequences with very long hits where the entire SSC region of a plastid is likely to have been captured are flagged and put in a file called `FilesToCheckAgain.txt`.
 Gene/taxon combinations where no BLAST hit was found are written out in a file called `NoHits.txt`.
-Do this with the script `blastProcessing.py`.
+Do this with the script `blastProcessing.py` or `blastProcessing-singleSeq.py`. 
+`blastProcessing.py` merges hits based on their absolute start and end coordinates in the genome, where as `blastProcessing-singleSeq.py` merges hits based on the genomic distance between the hits and will only append the single longest merged sequence.    
 
+
+`blastProcessing.py`
 The following arguments are required:
 * `--output-dir` A directory to store unaligned multifastas of hits from the Blast results.
 * `--blast-dir` Directory containing BLAST results.
@@ -185,9 +188,23 @@ The following arguments are optional:
 
 **Example command:** 
 ```
-python3 blastProcessing.py --output-dir unalignedMultiFastas --ir-cutoff 4000
+python3 blastProcessing.py --output-dir unalignedMultiFastas --ir-cutoff 4000 --blast-dir Blast/Results  --reference-dir Blast/ReferenceGeneSequences --genome-dir Blast/PlastidSequences
 ``` 
 
+`blastProcessing-singleSeq.py`
+The following arguments are required:
+* `--output-dir` A directory to store unaligned multifastas of hits from the Blast results.
+* `--blast-dir` Directory containing BLAST results.
+* `--reference-dir` Directory containing reference gene multifasta files.
+* `--genome-dir` Directory containing whole plastid fasta sequences. 
+
+The following arguments are optional:
+* `--merge-gap` The maximum number of base pairs in between to blast hits for those hits to be merged into one sequence.
+
+**Example command:** 
+```
+python3 blastProcessing.py --output-dir unalignedMultiFastas --merge-gap 800 --blast-dir Blast/Results  --reference-dir Blast/ReferenceGeneSequences --genome-dir Blast/PlastidSequences
+``` 
 
 
 ## VII. Aligning
