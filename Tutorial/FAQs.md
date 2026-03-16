@@ -7,8 +7,8 @@ Gene lists for "canonical" full sets of genes for monilophytes, bryophytes, and 
 
 ### Do I have to use chloroplast genome data?
 No, this pipeline should work with any type of genetic data. 
-Other organellar data sets, such as mitochondrial genomes, should work well.
-If using nuclear data sets, it's recommended to run on an HPC for storage reasons. 
+Other organellar data sets, such as mitochondrial genomes, should work well provided that the whole genome is assembled as one sequence with one GenBank ID.
+This could work for nuclear datasets, it's recommended to run on an HPC for storage reasons.
 If your reads are not yet assembled, try using [PhyloHerb](https://github.com/lmcai/PhyloHerb) instead.
 
 ### Will all the different spellings of my input gene list be recognised?
@@ -44,7 +44,9 @@ It may be easier to run the pipeline through once with sequences from genbank in
 ### Will this pipeline recover genes with trans-spliced introns?
 In angiosperm chloroplast genomes, _rps12_ is the only gene with trans-spliced introns. 
 Alignments for genes with trans-spliced will take more manual curation, but if `blastProcessing.py` is used then the full sequence should be recovered.
-If `blastProcessing-singleSeq.py` is used, then the whole gene will not be recovered, as this script extracts the longest sequence for each taxon the different exon(s) could be extracted from different sequences.
+If `blastProcessing-singleSeq.py` is used, then the whole gene will not be recovered, as this script extracts the longest sequence for each taxon the different exon(s) could be extracted from different sequences. 
+If the different exons for the gene are located in different chromosomes (i.e. have different GenBank IDs) then this script will skip over those sequences and not recover the genes. 
+This should only be a problem for mitochondrial sequences.
 
 ### How accurate is the updated presence/absence TSV?
 The TSV output `UpdateTSV.py` from will not be an accurate assessment of whether genes found are present in full if the alignments are used straight from `aligner.py`, manual inspection and editing is likely necessary. 

@@ -199,10 +199,10 @@ all_pseudogenes = []
 
 # loop over taxa in the dictionary 
 for recordID, record in records.items():
+    skip_record = False
     # extract taxon name from genabnk record
     taxon_name = "_".join(record.description.split()[:2])
-    taxa_names.append(taxon_name)
-    genbank_ids.append(record.name)
+
 
     # establish empty lists to be filled in
     present_genes = set()
@@ -252,7 +252,19 @@ for recordID, record in records.items():
         # -----------------------------------------------------------------------------------------------------------
 
         if canonical_name not in pseudogenes:
-            extracted_seq = str(feature.extract(record.seq))
+            try:
+                extracted_seq = str(feature.extract(record.seq))
+            # Sometimes exons found in other GenBank accessions are referenced in accessions
+            # This won't work at the moment so skip these accessions entirely
+            except ValueError as error:
+                if "another sequence" in str(error):
+                    print(f"\nWARNING: GenBank record {recordID} references another accession.")
+                    print("This genome is not self-contained and will be skipped.")
+                    skip_record = True
+                    break
+                else:
+                    raise
+                
             start, end = sorted([int(feature.location.start), int(feature.location.end)])
 
             # Full gene sequence (only type "gene")
@@ -268,6 +280,14 @@ for recordID, record in records.items():
                 if canonical_name not in coding_gene_candidates or len(extracted_seq) > len(coding_gene_candidates[canonical_name][0]):
                     coding_gene_candidates[canonical_name] = (extracted_seq, feature)
 
+    # skip the sequences that refer to other sequences
+    if skip_record:
+    	continue
+    
+    # append names once they have been deemed safe (no exons in other accessions)
+    taxa_names.append(taxon_name)
+    genbank_ids.append(record.name)
+    
     # if a gene is included in pseudogenes and present genes, remove it from pseudogenes
     # potentially could be an issue if partial copies are present at the end of one IR
     pseudogenes = pseudogenes - present_genes
@@ -321,7 +341,12 @@ for recordID, record in records.items():
             with open(out_file, "a") as fh:
                 # include the genbank ID, species name, and exon boundaries
                 fh.write(f">{recordID} : {cname} exons={exon_str}\n")
-                fh.write(str(feature_obj.extract(record.seq)) + "\n")
+                try:
+                    seq = str(feature_obj.extract(record.seq))
+                # if exons outside this genbank accession are refered to, then skip this ID  
+                except ValueError:
+                    continue
+                fh.write(seq + "\n")
 
 # --------------------------------------------------------------------------------------------------------------
 # Generate gene presence/absence profile for TSV/Nexus
