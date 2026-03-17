@@ -50,13 +50,11 @@ args = parser.parse_args()
 # Create output directories if they don't exist
 os.makedirs(args.outdir, exist_ok=True)
 if args.coding_outdir:
-    os.makedirs(args.coding_outdir, exist_ok=True)
+    os.makedirs(args.coding_outdir, exist_ok=True)    
 
 # --------------------------------------------------------------------------------------------------------------
 # Define gene list (default or user-provided)
 # --------------------------------------------------------------------------------------------------------------
-
-# still need to incorporate gene alias file/ other matching issues (e.g. pafII pafI for ycf4 ycf3)
 
 # Add in the default genes tested (canonical angiosperm plastid genes)
 default_gene_string = (
@@ -86,6 +84,16 @@ if args.gene_file:
 else:
     gene_list = default_gene_string.split("\t")
     print("Using default angiosperm plastid gene list")
+    
+# empty output fasta files if they already exist by making new ones 
+# stops endless appending of sequences
+for gene in gene_list:
+    out_file = os.path.join(args.outdir, f"{gene}_alignment_unaligned.fasta")
+    open(out_file, "w").close()  # empties file
+
+    if args.coding_outdir:
+        coding_file = os.path.join(args.coding_outdir, f"{gene}_coding_unaligned.fasta")
+        open(coding_file, "w").close()  # empties coding file
 
 # normalise gene names for matching
 normalised_targets = {}
