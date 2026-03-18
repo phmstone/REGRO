@@ -22,17 +22,10 @@ import matplotlib.patches as mpatches
 # Command line arguments
 # ----------------------------------------------------------
 
-parser = argparse.ArgumentParser(
-    description="Plot gene status matrix from TSV file.")
-
-parser.add_argument(
-    "--input_file",
-    help="Input presence/absence TSV file ")
-
-parser.add_argument(
-    "--output",
-    default="heatMapPlot.png",
-    help="Output image filename (default: heatMapPlot.png)")
+parser = argparse.ArgumentParser(description="Plot gene status matrix from TSV file.")
+parser.add_argument("--input", help="Input presence/absence TSV file ")
+parser.add_argument("--output", default="heatMapPlot.png", help="Output image filename (default: heatMapPlot.png)")
+# parser.add_argument("--removeRows", help="GenBank ID for accessions in TSV that should be left out of the plot")
 
 args = parser.parse_args()
 
@@ -43,7 +36,7 @@ args = parser.parse_args()
 # generated with presenceAbsence.py
 
 # read in .TSV file as a dataframe
-df = pd.read_csv(args.input_file, sep="\t")
+df = pd.read_csv(args.input, sep="\t")
 
 # combine taxon and GenBank ID into a new row name for the plot
 taxon_col = df.columns[0]
