@@ -75,7 +75,7 @@ This will create a multi-sequence GenBank file in the directory `Outputs`.
 
 ## III. Fetching and parsing annotations from GenBank sequences
 
-Now the annotations from the GenBank file downloaded will be used to generate reports on which genes are present and which are absent across the taxa.    
+Now the annotations from the multi-sequence GenBank file downloaded in step II will be used to generate reports on which genes are present and which are absent across the taxa.    
 The genes tested can be determined by the user. By default 113 genes canonically present in the angiosperm plastid genome are tested.
 
 Use `presenceAbsence.py` to create a .TSV showing whether the "test" genes are annotated as present, absent, or pseudogenes in the downloaded GenBank file.
@@ -84,13 +84,13 @@ Use `presenceAbsence.py` to create a .TSV showing whether the "test" genes are a
 Other genes or a subset of genes can be tested with the flag `gene_file`. Input a text file of gene names to bes tested, with one gene name on each line. 
 An example file for ribosomal protein genes is included (`ribosomalProteinGenes.txt`).    
 Most alternative spellings or formats of gene names are handled within this script's normalisation. 
-If accessions you want to test contain very different names for the same gene (e.g. pafI and ycf3), then an alias file should be used.    
+If accessions you want to test contain very different names for the same gene (e.g. _pafI_ and _ycf3_), then an alias file should be used.    
 The alias file is a text file containing the canonical gene name and the synonym on the same line separated by a tab.    
-The alias file should be called with the flag `--alias_file`. An example is included here `gene_alias.txt`.    
+The alias file should be called with the flag `--alias_file`. An example alias file is included [here](https://github.com/phmstone/PlastidGenomeContent/blob/main/Tutorial/exampleFiles/gene_alias.txt).    
 
 #### Outputs
-The main output is the TSV containing a row for each taxon, one column for GenBank ID, one column for species name, and then a column for each gene.    
-The genes are marked as present, absent, or pseudogenes according to the given annotations, where 0 = present, 1 = absent, and 2 = pseudogene.    
+The main output is the TSV file containing a row for each taxon, one column for GenBank ID, one column for species name, and then a column for each gene tested.    
+The genes are marked as present, absent, or pseudogenes according to the given annotations from the input GenBank file, where 0 = present, 1 = absent, and 2 = pseudogene.    
 A text file showing presence/absence data that can be inserted into a nexus file for character state mapping in e.g. [Mesquite](https://www.mesquiteproject.org/) can be produced with `--nexus`.    
 Multifasta files named by gene containing the full gene sequence for every taxon where the gene is annotated as present are generated.    
 The directory containing these is named `PresentGeneMultiFastas` by default, but a different name can be chosen with the `--outdir` flag.    
@@ -134,14 +134,15 @@ python3 heatMapPlot.py --input EricalesPresenceAbsence.tsv --output EricalesHeat
 
 ## V. Finding other sequences with BLAST
 
-Sometimes not all the genes present in a genome are successfully annotated, this is especially true for pseudogenes. With BLAST we can uncover genes that may have been missed by the original annotation method.     
+Sometimes not all the genes present in a genome are successfully annotated, this is especially true for pseudogenes. With BLAST we can uncover genes that may have been missed by the original annotation method, or not included in the final version of the genome on GenBank for some other reason.     
 The script `blastPresenceAbsence.py` does this.
-To save time and computing power, this script only uses BLAST to pull out genes that are annotated as pseudogenes or are missing. Genes annotated as present are assumed to be annotated correctly.    
-This script downloads the plastid genomes of all sequences with at least one gene annotated as missing/pseudogenised as fasta files, and makes databases from these fasta files.    
+To save time and computing power, this script only uses BLAST to try and pull out genes that are annotated as pseudogenes or are missing on GenBank. Genes annotated as present are assumed to be annotated correctly.    
+This script downloads fasta files for the plastid genomes of all sequences with at least one gene annotated as missing/pseudogenised, and makes databases for BLAST from these fasta files.    
+BLAST is performed using gene sequences from "reference sequences" as queries.
 
 #### Inputs
 Reference sequences should be supplied to act as query sequences for the BLAST searches. The reference sequences should have functional copies of all the genes you are testing. Ideally they are closely related taxonomically.    
-An example file containing GenBank IDs for sequences containing all 113 of the default angiosperm plastid genes is included (`referenceIDs.txt`)    
+An example file containing some GenBank IDs for sequences containing all 113 of the default angiosperm plastid genes is included (`referenceIDs.txt`)    
 The reference sequences should be identified by their GenBank IDs and the reference sequence file should have one GenBank ID per line in a .txt file.    
 If some of the sequences supplied in the original GenBank ID list for testing contain functional copies of all the genes, then this script will enable them to be used as references for BLAST.
 
@@ -167,13 +168,14 @@ python3 blastPresenceAbsence.py --input EricalesPresenceAbsence.tsv --email your
 
 ## VI. Parsing BLAST results
 
-The results from the BLAST searches can be used to extract putative gene sequences, which can then be put into alignments with the present genes that were extracted in `presenceAbsence.py`.    
+The results from the BLAST searches can be used to extract putative gene sequences, which can then be put into alignments with the present genes that were extracted in `presenceAbsence.py` to determine if these sequences are full genes or gene fragments/pseudogenes.    
 Pseudogenes annotated on GenBank are not extracted and put into the alignments here, as they should have sufficient homology to be pulled out with this approach.   
-Sequences with very long hits where the entire SSC region of a plastid is likely to have been captured are flagged and put in a file called `FilesToCheckAgain.txt`.
-In order to include all sequences found as "present" for you taxa of interest, use the `present-genes` and point to the directory containing those multifastas.
+Sequences with very long hits where the entire SSC region of a plastid may have been captured are flagged and put in a file called `FilesToCheckAgain.txt`.
+In order to include all sequences found as "present" for your taxa of interest, use `--present-genes` and point to the directory containing those multifastas.
 Gene/taxon combinations where no BLAST hit was found are written out in a file called `NoHits.txt`.
-Do this with the script `blastProcessing.py` or `blastProcessing-singleSeq.py`. 
-`blastProcessing.py` merges hits based on their absolute start and end coordinates in the genome, where as `blastProcessing-singleSeq.py` merges hits based on the genomic distance between the hits and will only append the single longest merged sequence.    
+There are two methods available for parsing BLAST results `blastProcessing.py` or `blastProcessing-singleSeq.py`. 
+`blastProcessing.py` merges hits based on their absolute start and end coordinates in the genome, where as `blastProcessing-singleSeq.py` merges hits based on the genomic distance between the hits and will only append the single longest merged sequence.   
+Read the [FAQ](https://github.com/phmstone/PlastidGenomeContent/blob/main/Tutorial/FAQs.md) if you're not sure which one to use. 
 
 
 `blastProcessing.py`
@@ -213,9 +215,10 @@ python3 blastProcessing-singleSeq.py --output-dir unalignedMultiFastas --merge-g
 
 ## VII. Aligning
 
-In order to determine if the sequences extracted are pseudogenes or full genes, and for future phylogenetic analyses, the multifastas generated in the previous step are aligned.
+In order to determine if the sequences extracted are pseudogenes or full genes likely to be functional copies, the multifastas generated in the previous step are aligned.
 Multifastas are aligned with MAFFT to produce a variety of alignments with `aligner.py`. 
 Nucleotide, codon, and protein alignments, as well as an unaligned protein sequence multifasta file are output for all protein coding genes.
+Alignments containing only the reference sequences are also produced for each gene.
 Gene names starting with "trn" or "rrn" are assumed to be non protein coding, so only nucleotide alignments are produced for these genes.
 
 The following arguments are required:
@@ -233,7 +236,7 @@ python3 aligner.py --input unalignedMultiFastas --output alignedMultiFastas
 
 `updateTSV.py` will assess alignments to determine whether the "found" sequences for each taxon-gene combination represent a pseudogene or full gene copy.
 Any blast hit put into an alignment will count as a pseudogene. 
-To be called as a present gene, the sequence must meet minimum coverage and similarity thresholds to the reference sequences, and not contain any premature stop codons.
+To be called as a present gene, the sequence must meet minimum coverage and similarity thresholds (adjustable) to the reference sequences, and not contain any premature stop codons.
 For genes starting with "trn" or "rrn" the minimum coverage and similarity thresholds alone are used.
 A change log file is output, where each line shows the old and new values and reason for change for each gene-taxon combination changed in the presence/absence .TSV.
 
