@@ -40,7 +40,8 @@ In the gene alias file the canonical name and the synonym should be on the same 
 A .txt file that gives presence/absence data in the correct format for inserting into a nexus file for character state mapping in e.g. Mesquite can be produced.    
 A default gene list is provided in the script, but an input of chosen plastid genes can be used. The genes should be written in a .txt file with one gene per line.   
 By default, all genes annotated as present have their full gene sequences removed and put into multifasta files by gene.   
-There is the option to produce multifastas by gene for coding sequences/intron free sequences as well.    
+There is the option to produce multifastas by gene for coding sequences/intron free sequences as well. Specify the name of the directory for coding sequences to be written out to with `--coding_outdir`.    
+Annotated pseudogene sequences can be extracted and stored as multifastas by gene. Specify the name of the directory for annotated pseudogenes with `--pseudo_outdir`  
 
 ## heatMapPlot.py
 This script takes the output .TSV from `presenceAbsence.py` as input and makes a "heatmap" plot showing gene status for each taxon as a .png file.   

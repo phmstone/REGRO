@@ -105,8 +105,9 @@ The following arguments are optional:
 * `--gene_file` A text file containing gene names separated by a new line.
 * `--alias_file` A text file containing canonical gene names and synonyms separated by a tab.
 * `--nexus` A text file for insertion into a nexus file for character state mapping.
-* `--outdir` Output directory for whole gene sequences.
+* `--outdir` Output directory for whole gene sequences. This directory is produced automatically, but the name can be changed with this flag.    
 * `--coding_outdir` Output directory for exon only gene sequences.
+* `--coding_outdir` Output directory for sequences annotated as pseudogenes.    
 
 **Example command:** 
 ```

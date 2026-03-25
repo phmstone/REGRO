@@ -4,7 +4,7 @@
 # 2. Parses annotations in the .gbk file by taxon
 # 3. Creates a TSV stating whether a gene is present, missing, or pseudogenized
 # 4. Optionally makes a nexus-style text block for character state mapping
-# 5. Outputs multifastas by gene for taxa that have genes annotated as being present (whole sequence and CDS)
+# 5. Outputs multifastas by gene for taxa that have genes annotated as being present
 ################################################################################################################
 
 # --------------------------------------------------------------------------------------------------------------
@@ -41,6 +41,8 @@ parser.add_argument("--outdir", default="PresentGeneMultiFastas",
                     help="Directory to store full gene sequences (default: PresentGeneMultiFastas)")
 parser.add_argument("--coding_outdir", default="PresentCodingSeqMultiFastas",
                     help="Directory to store coding sequences (default: PresentCodingSeqMultiFastas)")
+parser.add_argument("--pseudo_outdir", default="PseudogeneMultiFastas",
+                    help="Directory to store pseudogene sequences (default: PseudogeneMultiFastas)")
 # gene alias file
 parser.add_argument("--alias_file", help="Optional gene alias file: canonical_name <tab> synonym")
 
@@ -51,6 +53,8 @@ args = parser.parse_args()
 os.makedirs(args.outdir, exist_ok=True)
 if args.coding_outdir:
     os.makedirs(args.coding_outdir, exist_ok=True)    
+if args.pseudo_outdir:
+    os.makedirs(args.pseudo_outdir, exist_ok=True)
 
 # --------------------------------------------------------------------------------------------------------------
 # Define gene list (default or user-provided)
@@ -219,6 +223,7 @@ for recordID, record in records.items():
     # Dictionaries to store sequences for multifastas
     full_gene_candidates = {}
     coding_gene_candidates = {}
+    pseudogene_candidates = {}
 
     # Process features
     for feature in record.features:
@@ -250,7 +255,8 @@ for recordID, record in records.items():
         canonical_name = normalised_targets[norm_name]
 
         # if there's pseudo in the gene information, classify it as a pseudogene
-        if "pseudo" in feature.qualifiers or "pseudogene" in feature.qualifiers:
+        is_pseudo = "pseudo" in feature.qualifiers or "pseudogene" in feature.qualifiers
+        if is_pseudo:
             pseudogenes.add(canonical_name)
         else:
             present_genes.add(canonical_name)
@@ -259,38 +265,43 @@ for recordID, record in records.items():
         # Storing sequences for profiles and writing out to multifastas
         # -----------------------------------------------------------------------------------------------------------
 
-        if canonical_name not in pseudogenes:
-            try:
-                extracted_seq = str(feature.extract(record.seq))
-            # Sometimes exons found in other GenBank accessions are referenced in accessions
-            # This won't work at the moment so skip these accessions entirely
-            except ValueError as error:
-                if "another sequence" in str(error):
-                    print(f"\nWARNING: GenBank record {recordID} references another accession.")
-                    print("This genome is not self-contained and will be skipped.")
-                    skip_record = True
-                    break
-                else:
-                    raise
-                
-            start, end = sorted([int(feature.location.start), int(feature.location.end)])
+        try:
+            extracted_seq = str(feature.extract(record.seq))
+        # Sometimes exons found in other GenBank accessions are referenced in accessions
+        # This won't work at the moment so skip these accessions entirely
+        except ValueError as error:
+            if "another sequence" in str(error):
+                print(f"\nWARNING: GenBank record {recordID} references another accession.")
+                print("This genome is not self-contained and will be skipped.")
+                skip_record = True
+                break
+            else:
+                raise
+            
+        start, end = sorted([int(feature.location.start), int(feature.location.end)])
 
-            # Full gene sequence (only type "gene")
-            if feature.type == "gene":
-                # store the gene if first time seen, if the name has been seen before then keep the longer copy
-                if canonical_name not in full_gene_candidates or len(extracted_seq) > len(full_gene_candidates[canonical_name][0]):
-                    full_gene_candidates[canonical_name] = (extracted_seq, start, end)
+         # Pseudogenes
+        if is_pseudo:
+            if canonical_name not in pseudogene_candidates or len(extracted_seq) > len(pseudogene_candidates[canonical_name][0]):
+                pseudogene_candidates[canonical_name] = (extracted_seq, start, end)
+            continue
 
-            # Coding sequence (CDS/tRNA/rRNA)
-            if feature.type in {"CDS", "tRNA", "rRNA"}:
-                extracted_seq = str(feature.extract(record.seq))
-                # store both sequence and feature for exon extraction
-                if canonical_name not in coding_gene_candidates or len(extracted_seq) > len(coding_gene_candidates[canonical_name][0]):
-                    coding_gene_candidates[canonical_name] = (extracted_seq, feature)
+        # Full gene sequence (only type "gene")
+        if feature.type == "gene":
+            # store the gene if first time seen, if the name has been seen before then keep the longer copy
+            if canonical_name not in full_gene_candidates or len(extracted_seq) > len(full_gene_candidates[canonical_name][0]):
+                full_gene_candidates[canonical_name] = (extracted_seq, start, end)
+
+        # Coding sequence (CDS/tRNA/rRNA)
+        if feature.type in {"CDS", "tRNA", "rRNA"}:
+            extracted_seq = str(feature.extract(record.seq))
+            # store both sequence and feature for exon extraction
+            if canonical_name not in coding_gene_candidates or len(extracted_seq) > len(coding_gene_candidates[canonical_name][0]):
+                coding_gene_candidates[canonical_name] = (extracted_seq, feature)
 
     # skip the sequences that refer to other sequences
     if skip_record:
-    	continue
+        continue
     
     # append names once they have been deemed safe (no exons in other accessions)
     taxa_names.append(taxon_name)
@@ -303,10 +314,10 @@ for recordID, record in records.items():
     all_pseudogenes.append(pseudogenes)
 
     # ------------------------------------------------------------------------------------------------------------------------
-    # Write multifasta files for full gene sequences and CDS
+    # Write multifasta files for full gene sequences, CDS, and pseudogenes
     # ------------------------------------------------------------------------------------------------------------------------
     
-    # make an list for genes that have been written out to file
+    # make a list for genes that have been written out to file
     written_full = set()
     # loop through the dictionary created earlier
     for cname, (seq, start, end) in full_gene_candidates.items():
@@ -323,7 +334,7 @@ for recordID, record in records.items():
             fh.write(f">{recordID} : {cname} {start}-{end}\n")
             fh.write(seq + "\n")
 
-    # make an list for CDS that have been written out to file
+    # make a list for CDS that have been written out to file
     written_coding = set()
     # CDS is optional but full multifastas (above) is innate
     if args.coding_outdir:
@@ -344,7 +355,7 @@ for recordID, record in records.items():
             else:
                 exon_ranges.append(f"{int(feature_obj.location.start)+1}-{int(feature_obj.location.end)}")
             exon_str = ";".join(exon_ranges)
-            
+            # write out the file
             out_file = os.path.join(args.coding_outdir, f"{cname}_coding_unaligned.fasta")
             with open(out_file, "a") as fh:
                 # include the genbank ID, species name, and exon boundaries
@@ -356,6 +367,23 @@ for recordID, record in records.items():
                     continue
                 fh.write(seq + "\n")
 
+    # writing out pseudogenes is also optional
+    if args.pseudo_outdir:   
+        written_pseudo = set()
+        for cname, (seq, start, end) in pseudogene_candidates.items():
+            # skip if a functional copy of the gene exists
+            if cname in present_genes:
+                continue
+            # skip exact duplicates
+            key = (cname, start, end)
+            if key in written_pseudo:
+                continue
+            written_pseudo.add(key)
+            # write out the file
+            out_file = os.path.join(args.pseudo_outdir, f"{cname}_pseudogene_unaligned.fasta")
+            with open(out_file, "a") as fh:
+                fh.write(f">pseudo_{recordID} : {cname} {start}-{end}\n")
+                fh.write(seq + "\n")
 # --------------------------------------------------------------------------------------------------------------
 # Generate gene presence/absence profile for TSV/Nexus
 # --------------------------------------------------------------------------------------------------------------
