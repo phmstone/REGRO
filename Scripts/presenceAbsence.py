@@ -382,7 +382,7 @@ for recordID, record in records.items():
             # write out the file
             out_file = os.path.join(args.pseudo_outdir, f"{cname}_pseudogene_unaligned.fasta")
             with open(out_file, "a") as fh:
-                fh.write(f">pseudo_{recordID} : {cname} {start}-{end}\n")
+                fh.write(f">pseudogene_{recordID} : {cname} {start}-{end}\n")
                 fh.write(seq + "\n")
 # --------------------------------------------------------------------------------------------------------------
 # Generate gene presence/absence profile for TSV/Nexus

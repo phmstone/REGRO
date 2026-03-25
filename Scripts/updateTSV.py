@@ -102,6 +102,13 @@ for gene in df.columns[2:]:
                 # if there is not a header (i.e. sequence data) join all lines of sequence together into one string
                 if header:
                     sequence = "".join(seq_lines)
+                    
+                    # basically skip genes annotated as pseudogenes on GenBank as pseudogenes if user chooses to add them into the alignment
+                    if "pseudogene" in header.lower():
+                        header = line[1:]
+                        seq_lines = []
+                        continue
+                    # sequences found through BLAST will have "|" character based on how i wrote the output
                     if "|" in header:
                         # extract GenBank ID from header
                         # all made in same format from previous scripts so parsing can be automated like this
@@ -121,12 +128,13 @@ for gene in df.columns[2:]:
         # Process the last sequence in the file (previous block set up to process a sequence by finding the next header)
         if header:
             sequence = "".join(seq_lines)
-            if "|" in header:
-                parts = header.split("|")
-                genbank = parts[0].split(".")[0]
-                sequences.setdefault(genbank, []).append(sequence)
-            else:
-                reference_seq = sequence
+            if "pseudogene" not in header.lower():
+                if "|" in header:
+                    parts = header.split("|")
+                    genbank = parts[0].split(".")[0]
+                    sequences.setdefault(genbank, []).append(sequence)
+                else:
+                    reference_seq = sequence
 
     # this should never happen based on how I constructed pipeline but including it just in case
     if reference_seq is None:
