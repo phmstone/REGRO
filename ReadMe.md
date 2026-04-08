@@ -1,6 +1,6 @@
 # 🌿🧬🌷 REGRO 🌷🧬🌿
 
-## <u>R</u>etrieval <u>E</u>ngine for <u>G</u>ene <u>R</u>ecovery in <u>O</u>rganelles
+## <ins>R</ins>etrieval <ins>E</ins>ngine for <ins>G</ins>ene <ins>R</ins>ecovery in <ins>O</ins>rganelles
 
 REGRO is a suite of python scripts designed to investigate plastid genome degradation. 
 Using an input list of GenBank IDs, the annotations will be parsed to produce alignments of present genes and a report of gene presence/absence/pseudogenisation (GenBank mode).
