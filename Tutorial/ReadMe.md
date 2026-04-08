@@ -145,7 +145,9 @@ BLAST is performed using gene sequences from "reference sequences" as queries.
 Reference sequences should be supplied to act as query sequences for the BLAST searches. The reference sequences should have functional copies of all the genes you are testing. Ideally they are closely related taxonomically.    
 An example file containing some GenBank IDs for sequences containing all 113 of the default angiosperm plastid genes is included (`referenceIDs.txt`)    
 The reference sequences should be identified by their GenBank IDs and the reference sequence file should have one GenBank ID per line in a .txt file.    
-If some of the sequences supplied in the original GenBank ID list for testing contain functional copies of all the genes, then this script will enable them to be used as references for BLAST.
+If some of the sequences supplied in the original GenBank ID list for testing contain functional copies of all the genes, then this script will enable them to be used as references for BLAST.    
+If you are having trouble finding a GenBank accession that has all genes you want to test, then you could remove genes from the gene list, or run in `--fastaMode`. 
+Make a FASTA file containing sequences for all the genes in your gene list. Name each sequence starting with the gene name, and include any identifying information after an underscore. 
 
 #### Outputs
 Fasta files from the GenBank sequences in the original .txt file list, BLAST directories, BLAST results, and .gb files for the "reference" sequences are all produced and organised automatically in directories.     
@@ -159,7 +161,8 @@ The following arguments are required:
 The following arguments are optional:
 * `--reference-ids` A text file containing GenBank IDs known to have all genes of interest separated by a new line. Optional because if one of the IDs in the input .TSV contains all genes of interest, that GenBank ID can be used as a "reference".
 * `--blast-type` Choose between tblastx or blastn (defualt is blastn).
-* `--outdir` A directory that all ouputs are put into (default name is `Blast/ReferenceGeneSequences`).    
+* `--outdir` A directory that all ouputs are put into (default name is `Blast/ReferenceGeneSequences`).   
+* `--fastaMode` A FASTA file containing sequences for all genes being tested.
 
 **Example command:** 
 ```
