@@ -1,9 +1,7 @@
-# Pipeline Tutorial
+# REGRO Tutorial
 
-This tutorial will go through the pipeline step by step.   
-Example files are included to use the pipeline to study genome degradation in 
-mycoheterotrophic and autotrophic Ericaceae, and reconstruct a phylogeny.
-
+This tutorial will go through REGRO step by step using discovery mode to investigate plastid genome degradation in autotrophic and mycoheterotrophic taxa in Ericales.
+All necessary files can be found in the [example files directory](https://github.com/phmstone/PlastidGenomeContent/tree/main/Tutorial/exampleFiles).
 
 ## I. Installation and prerequisites
 
