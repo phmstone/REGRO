@@ -1,6 +1,6 @@
 # 🌿🧬🌷 REGRO 🌷🧬🌿
 
-### **R**etrieval **E**ngine for **G**ene **R**ecovery in **O**rganelles
+**R**etrieval **E**ngine for **G**ene **R**ecovery in **O**rganelles
 
 REGRO is a suite of python scripts designed to investigate plastid genome degradation. 
 Using an input list of GenBank IDs, the annotations will be parsed to produce alignments of present genes and a report of gene presence/absence/pseudogenisation (GenBank mode).
@@ -9,7 +9,7 @@ Go to the [tutorial](https://github.com/phmstone/PlastidGenomeContent/tree/main/
 If you have questions, please check the [FAQ page](https://github.com/phmstone/PlastidGenomeContent/blob/main/Tutorial/FAQs.md) before raising an issue.
 
 
-REGORO is designed for users who are comfortable in the command line environment.
+REGRO is designed for users who are comfortable in the command line environment.
 Some useful tutorials for biologists getting started using the command line can be found [here](https://github.com/mossmatters/introToCmdLine/blob/master/introToCmdLine.pdf) and [here](https://datacarpentry.github.io/shell-genomics/). 
 Work through these first if you feel you need more experience before using REGRO.
 
