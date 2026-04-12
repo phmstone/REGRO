@@ -36,7 +36,7 @@ This plot relies solely on the presence/absence data from the input .TSV file, w
 This script uses the .TSV generated from `presenceAbsence.py` and a list of GenBank IDs to use as plastid gene reference sequences input by the user. 
 The presence/absence profiles from the TSV are read in by gene for each species. Species from this TSV that have all genes present will be added to the reference species list.  
 The reference species list should ideally contain GenBank IDs of whole plastid sequences of species closely to the taxa of interest that contain all plastid genes of interest. An example list of angiosperm plastid sequences that contain all the default plastid genes is provided (`referenceIDsList.txt`).    
-If you can't find a GenBank accession that has all of the genes you want to study you can choose to run REGRO in `--fastaMode`. Make a FASTA file that has at least one sequence for each gene in the gene list, and name the gene sequences starting with the gene name, followed by an underscore, and then any other identifying information.
+If you can't find a GenBank accession that has all of the genes you want to study you can choose to run REGRO in `--fastaMode`. Make a FASTA file that has at least one sequence for each gene in the gene list, and name the gene sequences starting with the gene name, followed by an underscore, and then any other identifying information. Do not user the "|" character in the sequence names.
 For each species in the TSV, blast searches are performed on genes that are categorised as either missing or pseudogenized. The blast searches are done with a reference sequence from the user's input reference species list.  
 The script outputs a directory `Blast` (can be renamed by the user) with five subdirectories; `Databases`, `PlastidSequences`, `ReferenceGeneSequences`, `ReferenceGenomes`, and `Results`.  
 * `Databases` database files for every GenBank accession with missing genes or pseudogenes that are needed for blast
@@ -77,7 +77,6 @@ This script aligns the files in `unalignedMultifastas`output by `blastProcessing
 Requires MAFFT to be installed into the user's PATH or able to be called on the command line.  
 The directory containing the multifastas to be aligned needs to be specified in `--input`.  
 The aligned fasta files will be output into a new directory specified by the user with `--output`.  
-This is the least worked on so far!!!!  
 
 
 ## updateTSV.py  
@@ -86,10 +85,4 @@ Determines if any changes need to be made to the presence/absence .TSV based on 
 Creates a new presence/absence .TSV file and a change log .TSV that records changes made to the original presence/absence .TSV file and why.  
 The new output presence/absence .TSV can also be used with `heatMapPlot.py` to make a new figure.   
   
-  
-### To do list
-* fix flagging/ strangeness around IR in `blastProcessing.py`
-* make a list of all modules needed for pipeline
-* deal with genes that have introns (exonerate???)
-* improve `aligner.py` (only once `blastProcessing.py` is fixed)
 
