@@ -16,7 +16,7 @@ Some useful tutorials for biologists getting started using the command line can 
 Work through these first if you feel you need more experience before using REGRO.
 
 
-### Installation
+### Installation and prerequisites
 
 You can obtain REGRO in one of the following ways.
 
@@ -37,23 +37,21 @@ wget https://github.com/phmstone/REGRO/archive/refs/heads/main.zip
 unzip main.zip
 ```
 
-### Required third party python packages
+**Required dependencies**  
+* BLAST
+* MAFFT 
+These are only needed to run REGRO in discovery mode.    
+Both can be installed with [Conda](https://anaconda.org/), [Homebrew](https://brew.sh/), or manually and then added to your $PATH. 
+If you are planning to run REGRO on an HPC then check if these tools are available as modules, as installation may be unnecessary.    
+
+**Required third party Python packages**  
 * Bio
 * certifi
 * numpy
 * matplotlib
 * pandas
 * seaborn
-
 Python packages can be installed with [pip](https://pypi.org/project/pip/), as shown in the [tutorial](https://github.com/phmstone/REGRO/tree/main/Tutorial).
-
-### Required software
-* BLAST
-* MAFFT 
-
-These are only needed to run REGRO in discovery mode.    
-Both can be installed with [Conda](https://anaconda.org/), [Homebrew](https://brew.sh/), or manually and then added to your $PATH. 
-If you are planning to run REGRO on an HPC then check if these tools are available as modules, as installation may be unnecessary.    
 
 
 
