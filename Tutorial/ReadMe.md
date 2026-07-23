@@ -76,7 +76,7 @@ This will create a multi-sequence GenBank file in the directory `Outputs`.
 Now the annotations from the multi-sequence GenBank file downloaded in step II will be used to generate reports on which genes are present and which are absent across the taxa.    
 The genes tested can be determined by the user. By default 113 genes canonically present in the angiosperm plastid genome are tested.
 
-Use `presenceAbsence.py` to create a .TSV showing whether the "test" genes are annotated as present, absent, or pseudogenes in the downloaded GenBank file.
+Use `presenceAbsence.py` to create a .tsv showing whether the "test" genes are annotated as present, absent, or pseudogenes in the downloaded GenBank file.
 
 #### Inputs
 Other genes or a subset of genes can be tested with the flag `gene_file`. Input a text file of gene names to bes tested, with one gene name on each line. 
@@ -87,7 +87,7 @@ The alias file is a text file containing the canonical gene name and the synonym
 The alias file should be called with the flag `--alias_file`. An example alias file is included [here](https://github.com/phmstone/REGRO/blob/main/Tutorial/exampleFiles/gene_alias.txt).    
 
 #### Outputs
-The main output is the TSV file containing a row for each taxon, one column for GenBank ID, one column for species name, and then a column for each gene tested.    
+The main output is the .tsv file containing a row for each taxon, one column for GenBank ID, one column for species name, and then a column for each gene tested.    
 The genes are marked as present, absent, or pseudogenes according to the given annotations from the input GenBank file, where 0 = present, 1 = absent, and 2 = pseudogene.    
 A text file showing presence/absence data that can be inserted into a nexus file for character state mapping in e.g. [Mesquite](https://www.mesquiteproject.org/) can be produced with `--nexus`.    
 Multifasta files named by gene containing the full gene sequence for every taxon where the gene is annotated as present are generated.    
@@ -97,7 +97,7 @@ The directory containing these is named `PresentCodingSeqMultiFastas` by default
 
 The following arguments are required:
 * `--input` The .gb file downloaded in the previous step
-* `--tsv` The name of the output presence/absence matrix .TSV file.
+* `--tsv` The name of the output presence/absence matrix .tsv file.
 
 The following arguments are optional:
 * `--gene_file` A text file containing gene names separated by a new line.
@@ -111,7 +111,7 @@ The following arguments are optional:
 ```
 python3 presenceAbsence.py --input Ericales.gb --tsv EricalesPresenceAbsence.tsv --alias_file gene_alias.txt --outdir presentGeneSequences --coding_outdir presentGeneCodingSequences
 ```   
-The example original presence/absence TSV for the dataset in this tutorial can be found [here](https://github.com/phmstone/REGRO/blob/main/Tutorial/exampleOutputs/EricalesPresenceAbsence.tsv).
+The example original presence/absence .tsv for the dataset in this tutorial can be found [here](https://github.com/phmstone/REGRO/blob/main/Tutorial/exampleOutputs/EricalesPresenceAbsence.tsv).
 
 
 
@@ -123,7 +123,7 @@ Use `heatMapPlot.py` to create a "heatmap" style figure showing which genes are 
 If no output file name is given then the image will be named `heatMapPlot.png`.     
 
 The following argument is required:
-* `--input` File name of the input .TSV with presence/absence data.
+* `--input` File name of the input .tsv with presence/absence data.
 
 The following argument is optional:
 * `--output` The name of the .png file of the plot.
@@ -158,11 +158,11 @@ Fasta files, BLAST database files, and .gb files are all named after the relevan
 By default, a new directory called `Blast` is created for all the output files and directories to go into, but the directory name can be changed.
 
 The following arguments are required:
-* `--input` The presence/absence .TSV file downloaded in the previous step
+* `--input` The presence/absence .tsv file downloaded in the previous step
 * `--email` The email address associated with your NCBI account.
 
 The following arguments are optional:
-* `--reference-ids` A text file containing GenBank IDs known to have all genes of interest separated by a new line. Optional because if one of the IDs in the input .TSV contains all genes of interest, that GenBank ID can be used as a "reference".
+* `--reference-ids` A text file containing GenBank IDs known to have all genes of interest separated by a new line. Optional because if one of the IDs in the input .tsv contains all genes of interest, that GenBank ID can be used as a "reference".
 * `--blast-type` Choose between tblastx or blastn (defualt is blastn).
 * `--outdir` A directory that all ouputs are put into (default name is `Blast/ReferenceGeneSequences`).   
 * `--fastaMode` A FASTA file containing sequences for all genes being tested.
@@ -245,15 +245,15 @@ python3 aligner.py --input unalignedMultiFastas --output alignedMultiFastas
 Any blast hit put into an alignment will count as a pseudogene. 
 To be called as a present gene, the sequence must meet minimum coverage and similarity thresholds (adjustable) to the reference sequences, and not contain any premature stop codons.
 For genes starting with "trn" or "rrn" the minimum coverage and similarity thresholds alone are used.
-A change log file is output, where each line shows the old and new values and reason for change for each gene-taxon combination changed in the presence/absence .TSV.
+A change log file is output, where each line shows the old and new values and reason for change for each gene-taxon combination changed in the presence/absence .tsv.
 
 The following arguments are required:
-* `--ogTSV` The original presence/absence .TSV created from GenBank annotations.
+* `--ogTSV` The original presence/absence .tsv created from GenBank annotations.
 * `--alignDir` The directory containing aligned multifasta files produced in the previous step.
 
 The following arguments are optional:
-* `--outTSV` The updated presence/absence TSV file name (default is `updatedPA.tsv`)
-* `--changeLog` The file name for the log TSV recording changes made (default is `changeLog.tsv`)
+* `--outTSV` The updated presence/absence tsv file name (default is `updatedPA.tsv`)
+* `--changeLog` The file name for the log tsv recording changes made (default is `changeLog.tsv`)
 * `--minCov` The minimum coverage needed to a reference sequence for a gene to be called as present (default is `0.95`).
 * `--minSim` The minimum similarity needed to a reference sequence for a gene to be called as present (default is `0.95`).
 
@@ -270,7 +270,7 @@ Use `heatMapPlot.py` again to create a "heatmap" style figure showing which gene
 Make sure that the figure has a different name to the one created in step IV with the GenBank annotations.
 
 The following argument is required:
-* `--input` File name of the updated .TSV with presence/absence data.
+* `--input` File name of the updated .tsv with presence/absence data.
 
 The following argument is optional:
 * `--output` The name of the .png file of the plot.
