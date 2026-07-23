@@ -3,6 +3,9 @@
 This tutorial will go through REGRO step by step using discovery mode to investigate plastid genome degradation in autotrophic and mycoheterotrophic taxa in Ericales.
 All necessary files can be found in the [example files directory](https://github.com/phmstone/REGRO/tree/main/ExampleFiles).
 
+In our test dataset we have nine autotrophic species (*Actinidia eriantha*, *Arbutus unedo*, *Clethra fargesii*, *Clethra petelotii*, *Enkianthus campanulatus*, *Gaultheria griffithiana*, *Rhododendron ovatum*, *Vaccinium bracteatum*, and *Vaccinium corymbosum*), three partially mycoheterotrophic species (*Pyrola atropurpurea*, *Pyrola decorata*, and *Pyrola rotundifolia*), and five fully mycoheterotrophic species (*Allotropa virgata*, *Monotropa uniflora*, *Monotropastrum humile*, *Pityopus californicus*, and *Pterospora andromedea*).
+
+
 ## I. Installation and prerequisites
 
 
@@ -134,6 +137,7 @@ python3 heatMapPlot.py --input EricalesPresenceAbsence.tsv --output EricalesHeat
 ```
 The example original heatmap for the dataset in this tutorial can be found [here](https://github.com/phmstone/REGRO/blob/main/Tutorial/exampleOutputs/EricalesHeatMap.png).
 
+Note the amount of grey (pseudogenes) present for the partially mycoheterotrophic species (*Pyrola atropurpurea*, *Pyrola decorata*, and *Pyrola rotundifolia*), and black (missing genes) for the fully mycoheterotrophic species (*Allotropa virgata*, *Monotropa uniflora*, *Monotropastrum humile*, *Pityopus californicus*, and *Pterospora andromedea*).
 
 
 ## V. Finding other sequences with BLAST
@@ -281,6 +285,7 @@ python3 heatMapPlot.py --input updatedPA.tsv --output EricalesHeatMap-updated.pn
 ``` 
 The example updated heatmap for the dataset used in this tutorial can be found [here](https://github.com/phmstone/REGRO/blob/main/Tutorial/exampleOutputs/EricalesHeatMap-updated.png).
 
+Compare the differences between the two heatmaps. Using REGRO in discovery mode allowed many more tRNA genes and gene fragments to be found, as well as a few other genes.
 
 
 ## Pipeline Complete!
