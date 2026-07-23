@@ -6,7 +6,7 @@ A list of angiosperm mitochondrial genes in the correct format for gene list inp
 ### angiospermPlastidGenes.txt
 The default angiosperm plastid gene list included in `presenceAbsence.py`.    
 
-### angiospermPlastidReferences.TSV
+### angiospermPlastidReferences.tsv
 A table showing GenBank ID, species name, and family for accessions that have all genes in `angiospermPlastidGenes`.    
 
 ### bashScript.sh
