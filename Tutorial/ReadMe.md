@@ -111,6 +111,8 @@ The following arguments are optional:
 ```
 python3 presenceAbsence.py --input Ericales.gb --tsv EricalesPresenceAbsence.tsv --alias_file gene_alias.txt --outdir presentGeneSequences --coding_outdir presentGeneCodingSequences
 ```   
+The example original presence/absence TSV for the dataset in this tutorial can be found [here](https://github.com/phmstone/REGRO/blob/main/Tutorial/exampleOutputs/EricalesPresenceAbsence.tsv).
+
 
 
 
@@ -130,6 +132,9 @@ The following argument is optional:
 ```
 python3 heatMapPlot.py --input EricalesPresenceAbsence.tsv --output EricalesHeatMap.png
 ```
+The example original heatmap for the dataset in this tutorial can be found [here](https://github.com/phmstone/REGRO/blob/main/Tutorial/exampleOutputs/EricalesHeatMap.png).
+
+
 
 ## V. Finding other sequences with BLAST
 
@@ -256,7 +261,7 @@ The following arguments are optional:
 ```
 python3 updateTSV.py --ogTSV EricalesPresenceAbsence.tsv --alignDir alignedMultiFastas
 ```
-
+The example updated presence/absence table for the dataset used in this tutorial can be found [here](https://github.com/phmstone/REGRO/blob/main/Tutorial/exampleOutputs/updatedPA.tsv).
 
 
 ## IV. Visualising the updated gene presence/absence (optional)
@@ -274,6 +279,7 @@ The following argument is optional:
 ```
 python3 heatMapPlot.py --input updatedPA.tsv --output EricalesHeatMap-updated.png
 ``` 
+The example updated heatmap for the dataset used in this tutorial can be found [here](https://github.com/phmstone/REGRO/blob/main/Tutorial/exampleOutputs/EricalesHeatMap-updated.png).
 
 
 
