@@ -15,10 +15,10 @@ The file name of the output file has to be given as an argument on the command l
 The `Outputs` directory is created automatically by the script and does not need to be written into the path in the `--output` flag
 
 ## presenceAbsence.py
-This script converts the annotations present in GenBank files to a TSV with a column for each gene and a row for each taxon.  
+This script converts the annotations present in GenBank files to a .tsv with a column for each gene and a row for each taxon.  
 It takes the big GenBank file output by `fetchGenBank.py` as input. The .gbk file must be specified on the command line as input.  
-The value entered in the output TSV represents the status of the gene in that organism (0 = present, 1 = missing, 2 = pseudogene).   
-The name of the output .TSV must be specified on the command line.    
+The value entered in the output .tsv represents the status of the gene in that organism (0 = present, 1 = missing, 2 = pseudogene).   
+The name of the output .tsv must be specified on the command line.    
 A gene alias file can be provided on the command line to enable genes called very different things (e.g. pafI/ycf3) to be recognised as the same gene with `--alias_file`.   
 In the gene alias file the canonical name and the synonym should be on the same line separated by a tab. An example file, `gene_alias.txt` is included.
 A .txt file that gives presence/absence data in the correct format for inserting into a nexus file for character state mapping in e.g. Mesquite can be produced.    
@@ -28,16 +28,16 @@ There is the option to produce multifastas by gene for coding sequences/intron f
 Annotated pseudogene sequences can be extracted and stored as multifastas by gene. Specify the name of the directory for annotated pseudogenes with `--pseudo_outdir`  
 
 ## heatMapPlot.py
-This script takes the output .TSV from `presenceAbsence.py` as input and makes a "heatmap" plot showing gene status for each taxon as a .png file.   
+This script takes the output .tsv from `presenceAbsence.py` as input and makes a "heatmap" plot showing gene status for each taxon as a .png file.   
 The output file name can be given on the command line or the file will automatically called `heatmapPlot.png`.    
-This plot relies solely on the presence/absence data from the input .TSV file, which can be manually edited.    
+This plot relies solely on the presence/absence data from the input .tsv file, which can be manually edited.    
 
 ## blastPresenceAbsence.py
-This script uses the .TSV generated from `presenceAbsence.py` and a list of GenBank IDs to use as plastid gene reference sequences input by the user. 
-The presence/absence profiles from the TSV are read in by gene for each species. Species from this TSV that have all genes present will be added to the reference species list.  
+This script uses the .tsv generated from `presenceAbsence.py` and a list of GenBank IDs to use as plastid gene reference sequences input by the user. 
+The presence/absence profiles from the .tsv are read in by gene for each species. Species from this .tsv that have all genes present will be added to the reference species list.  
 The reference species list should ideally contain GenBank IDs of whole plastid sequences of species closely to the taxa of interest that contain all plastid genes of interest. An example list of angiosperm plastid sequences that contain all the default plastid genes is provided (`referenceIDsList.txt`).    
 If you can't find a GenBank accession that has all of the genes you want to study you can choose to run REGRO in `--fastaMode`. Make a FASTA file that has at least one sequence for each gene in the gene list, and name the gene sequences starting with the gene name, followed by an underscore, and then any other identifying information. Do not user the "|" character in the sequence names.
-For each species in the TSV, blast searches are performed on genes that are categorised as either missing or pseudogenized. The blast searches are done with a reference sequence from the user's input reference species list.  
+For each species in the .tsv, blast searches are performed on genes that are categorised as either missing or pseudogenized. The blast searches are done with a reference sequence from the user's input reference species list.  
 The script outputs a directory `Blast` (can be renamed by the user) with five subdirectories; `Databases`, `PlastidSequences`, `ReferenceGeneSequences`, `ReferenceGenomes`, and `Results`.  
 * `Databases` database files for every GenBank accession with missing genes or pseudogenes that are needed for blast
 * `PlastidSequences` fasta files for every GenBank accession with missing or pseudogenes
@@ -80,9 +80,9 @@ The aligned fasta files will be output into a new directory specified by the use
 
 
 ## updateTSV.py  
-This script uses the alignments created in `aligner.py` and the presence/absence .TSV file produced by `presenceAbsence.py`.    
-Determines if any changes need to be made to the presence/absence .TSV based on the blast results.   
-Creates a new presence/absence .TSV file and a change log .TSV that records changes made to the original presence/absence .TSV file and why.  
-The new output presence/absence .TSV can also be used with `heatMapPlot.py` to make a new figure.   
+This script uses the alignments created in `aligner.py` and the presence/absence .tsv file produced by `presenceAbsence.py`.    
+Determines if any changes need to be made to the presence/absence .tsv based on the blast results.   
+Creates a new presence/absence .tsv file and a change log .tsv that records changes made to the original presence/absence .tsv file and why.  
+The new output presence/absence .tsv can also be used with `heatMapPlot.py` to make a new figure.   
   
 
