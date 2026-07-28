@@ -3,3 +3,7 @@ petA	cytochrome_f
 ycf3	pafI
 ycf4	pafII
 psbi	psb1
+cemA	ycf10
+matK	ORF542
+psbZ	ycf9
+ycf1	TIC214
