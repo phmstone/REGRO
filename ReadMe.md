@@ -20,7 +20,7 @@ Work through these first if you feel you need more experience before using REGRO
 ![Flowchart diagram for REGRO showing inputs, outputs, script order, and optional steps](/Images/pipeline.png)
 
 
-### Installation 
+### Supported platforms 
 
 REGRO will has been tested on macOS and Linux. Windows users can use REGRO with Windows Subsystem for Linux (WSL).
 
