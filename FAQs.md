@@ -55,6 +55,13 @@ The similarity and coverage thresholds can be lowered by the user but proper che
 The output .tsv can also be edited manually to reflect changes in gene status discovered by manual editing. 
 Take extra care interpreting these results if you are working with taxa that use an [alternative genetic code](https://www.pnas.org/doi/10.1073/pnas.1816822116) or have [high rates of RNA editing](https://academic.oup.com/nar/article/31/9/2417/1080299?login=false).    
 
+### What if I'm working with a lineage with high rates of RNA editing?
+REGRO classifies genes using DNA sequence data and does not account for RNA editing. 
+In lineages with extensive RNA editing, genes may contain apparent premature stop codons or other sequence features that resemble pseudogenization but are corrected at the RNA level. 
+Consequently, some genes may be classified as pseudogenized even though they remain functional. 
+If you are working with a lineage known to exhibit extensive RNA editing, you should take care to manually review alignments with genes classified as pseudogenized, and interpret these results in light of the biology of your study system.
+Other tools exist to help deal with these questions, such as [CURE-Chloroplast](https://pmc.ncbi.nlm.nih.gov/articles/PMC2688514/) and [ReFernment](https://bsapubs.onlinelibrary.wiley.com/doi/10.1002/aps3.1216).
+
 ### Does this test if detected tRNA genes have functional anticodons?
 No. The pipeline uses similarity and percentage coverage of the reference sequence only to call non-coding protein genes' status. 
 I recommend you look into using [tRNAscan-SE](https://github.com/UCSC-LoweLab/tRNAscan-SE) in addition to pipeline if you need to know whether your the tRNA genes have functional anticodons.
