@@ -22,6 +22,11 @@ Work through these first if you feel you need more experience before using REGRO
 
 ### Installation 
 
+REGRO will has been tested on macOS and Linux. Windows users can use REGRO with Windows Subsystem for Linux (WSL).
+
+
+### Installation 
+
 You can obtain REGRO in one of the following ways.
 
 **Clone the repository** (recommended)    
