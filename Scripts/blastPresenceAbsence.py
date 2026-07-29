@@ -293,10 +293,18 @@ if not args.fastaMode:
 	# ----------------------------------------------------------
 	
 	missing_reference_genes = []
+
+	# Compare filenames case-insensitively because GenBank gene names
+	# may be normalized to lowercase during extraction
+	# it's a problem that happens with \linux (not MacOS)
+	existing_reference_genes = {
+		os.path.splitext(f)[0].lower()
+		for f in os.listdir(args.reference_outdir)
+		if f.endswith(".fasta")
+	}
 	
 	for gene in gene_names:
-		fasta_path = os.path.join(args.reference_outdir, f"{gene}.fasta")
-		if not os.path.exists(fasta_path) or os.path.getsize(fasta_path) == 0:
+		if gene.lower() not in existing_reference_genes:
 			missing_reference_genes.append(gene)
 			
 	if missing_reference_genes:
