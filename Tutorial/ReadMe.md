@@ -9,7 +9,7 @@ In our test dataset we have nine autotrophic species (*Actinidia eriantha*, *Arb
 ## I. Installation and prerequisites
 
 
-You can obtain the pipeline in one of the following ways.
+You can obtain REGRO in one of the following ways.
 
 Clone the repository (recommended)    
 ```
@@ -34,7 +34,7 @@ Install the following software to run the pipeline:
 * [BLAST](https://blast.ncbi.nlm.nih.gov/doc/blast-help/downloadblastdata.html)
 
 If running on an HPC (e.g. Digital Research Alliance of Canada) then pre-installed modules can be used.     
-Be sure to load them before attempting to run Pipeline.
+Be sure to load them before attempting to run REGRO.
 
 Several third party Python packages are needed:
 * biopython
@@ -45,6 +45,14 @@ Several third party Python packages are needed:
 * seaborn
 
 Run `pip install pandas matplotlib seaborn biopython numpy certifi` to install these if necessary.
+
+Alternatively, you can use Conda to install the dependencies for REGRO if you prefer.
+
+```
+cd REGRO
+conda env create -f environment.yml
+conda activate REGRO
+```
 
 You will also need an NCBI account in order to download sequences from GenBank.
 Make one [here](https://account.ncbi.nlm.nih.gov/signup/?).
