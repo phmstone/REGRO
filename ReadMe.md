@@ -2,7 +2,7 @@
 
 ## <ins>R</ins>etrieval <ins>E</ins>ngine for <ins>G</ins>ene <ins>R</ins>ecovery in <ins>O</ins>rganelles
 
-REGRO is a suite of python scripts designed to investigate plastid genome degradation. 
+REGRO is a suite of Python scripts for identifying and extracting genes and gene fragments from organellar genomes, particularly those missed by existing genome annotations.
 Using an input list of GenBank IDs, the annotations will be parsed to produce alignments of present genes and a report of gene presence/absence/pseudogenisation (GenBank mode).
 Further scripts are included to find genes and gene fragments that may have been missed by the annotations on the GenBank files (discovery mode).
 
