@@ -68,10 +68,10 @@ Python packages can be installed with [pip](https://pypi.org/project/pip/), as s
 
 **Using Conda to download dependencies**  
 
-If you prefer to use Conda then a yaml file is also provided in the home directory.
+If you prefer to use Conda then a [yaml file](https://github.com/phmstone/REGRO/blob/main/environment.yml) is also provided in the home directory.
 This will ensure no version issues are encountered with the different dependencies needed for REGRO.
 
-After having downloaded REGRO via one of the available methods, use it like this:
+After having downloaded REGRO via one of the available methods, use the .yml file like this:
 ```
 cd REGRO
 conda env create -f environment.yml
