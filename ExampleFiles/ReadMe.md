@@ -15,7 +15,7 @@ An bash script that runs the whole pipeline in one go using the Ericaceae test d
 ### bryophytePlastidGenes.txt
 A list of bryophyte plastid genes in the correct format for gene list input.   
 
-### ericaceaeGenbankIDs.txt
+### EricalesGenbankIDs.txt
 A list of GenBank IDs for the Ericales test data set used in the [tutorial](https://github.com/phmstone/PlastidGenomeContent/tree/main/Tutorial).
 
 ### gene_alias.txt
