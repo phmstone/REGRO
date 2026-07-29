@@ -69,32 +69,10 @@ Python packages can be installed with [pip](https://pypi.org/project/pip/), as s
 **Using Conda to download dependencies**  
 
 If you prefer to use Conda then a yaml file is also provided in the home directory.
-
-```
-name: REGRO
-
-channels:
-  - conda-forge
-  - bioconda
-
-dependencies:
-  - python=3.12
-  - biopython=1.87
-  - blast=2.17.0
-  - mafft=7.525
-  - certifi=2026.7.22
-  - matplotlib=3.11.1
-  - numpy=2.5.1
-  - pandas=3.0.5
-  - seaborn=0.13.2
-```
-
 This will ensure no version issues are encountered with the different dependencies needed for REGRO.
 
-Use it like this:
-
+After having downloaded REGRO via one of the available methods, use it like this:
 ```
-git clone https://github.com/username/TOOL.git
 cd REGRO
 conda env create -f environment.yml
 conda activate REGRO
