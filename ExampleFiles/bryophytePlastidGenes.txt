@@ -11,6 +11,8 @@ chlB
 chlL
 chlN
 clpP
+cysA
+cysT
 infA
 matK
 ndhA
@@ -78,6 +80,7 @@ rps15
 rps16
 rps18
 rps19
+tufA
 ycf1
 ycf2
 ycf3
