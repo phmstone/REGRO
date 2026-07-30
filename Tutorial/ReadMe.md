@@ -158,7 +158,7 @@ BLAST is performed using gene sequences from "reference sequences" as queries.
 You can also choose to run REGRO in  `--fastaMode` and supply the reference sequences that you want to be used as queries directly.
 
 #### Inputs
-To perform BLAST searches, REGRO requires reference sequences that have annotations for all the genes you are testing. Ideally, these reference sequences should be closely related taxonomically. 
+To perform BLAST searches, it's simplest to find some reference sequences on GenBank that have annotations for all the genes you are testing. Ideally, these reference sequences should be closely related taxonomically. 
 
 Reference sequences must be identified by their GenBank IDs and provided in a `.txt` file with one GenBank ID per line (an example file, `referenceIDs.txt`, is included containing GenBank IDs for plastid genomes with all 113 default angiosperm plastid genes). 
 A single reference sequence must contain all the target genes; it is not sufficient to combine multiple GenBank accessions to cover the gene set. 
