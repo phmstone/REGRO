@@ -1,87 +1,77 @@
 speciesName	genbankID	gene	old_value	new_value	reason	coverage	similarity
-Pterospora_andromedea	MF120270	ndhA	1	2	coding_degraded	0.019	0.6
-Monotropa_hypopitys	KU878156	ndhB	2	1	no_sequence		
-Pyrola_atropurpurea	NC_088559	ndhF	1	2	coding_degraded	0.487	0.466
-Pyrola_decorata	PV200167	ndhF	1	2	coding_degraded	0.487	0.466
-Monotropa_hypopitys	KU878156	ccsA	2	1	no_sequence		
-Monotropa_hypopitys	KU878156	psaB	2	1	no_sequence		
+Pterospora_andromedea	MF120270	ndhA	1	2	coding_degraded	0.019	0.769
+Pyrola_decorata	PV200167	ndhF	1	2	coding_degraded	0.491	0.445
+Pyrola_atropurpurea	NC_088559	ndhF	1	2	coding_degraded	0.491	0.445
 Pterospora_andromedea	MF120270	psbA	1	2	coding_degraded	0.363	0.246
 Vaccinium_corymbosum	NC_068711	psbN	1	2	coding_degraded	1.0	0.953
-Pyrola_atropurpurea	NC_088559	psbZ	1	2	coding_degraded	1.0	0.952
 Pyrola_decorata	PV200167	psbZ	1	2	coding_degraded	1.0	0.952
-Vaccinium_corymbosum	NC_068711	ycf3	1	2	coding_degraded	0.979	0.599
-Vaccinium_corymbosum	NC_068711	ycf4	1	2	coding_degraded	1.0	0.94
-Orthilia_secunda	KU588419	rpoA	1	2	coding_degraded	0.551	0.234
-Orthilia_secunda	KU588419	rpoB	1	2	coding_degraded	0.013	0.286
-Monotropa_hypopitys	KU878156	atpB	2	1	no_sequence		
+Pyrola_atropurpurea	NC_088559	psbZ	1	2	coding_degraded	1.0	0.952
+Vaccinium_corymbosum	NC_068711	ycf3	1	2	coding_degraded	0.959	0.328
+Vaccinium_corymbosum	NC_068711	ycf4	1	2	coding_degraded	1.0	0.87
 Pityopus_californicus	NC_035584	atpB	1	2	coding_degraded	0.06	0.367
-Actinidia_eriantha	MZ959065	atpF	1	2	coding_degraded	1.0	0.638
-Vaccinium_corymbosum	NC_068711	infA	1	2	coding_degraded	0.571	0.75
-Vaccinium_bracteatum	PQ284534	infA	1	2	coding_degraded	0.571	0.75
-Gaultheria_griffithiana	NC_057623	infA	1	2	coding_degraded	0.545	0.833
-Orthilia_secunda	KU588419	rpl2	1	2	coding_degraded	0.026	0.3
+Actinidia_eriantha	MZ959065	atpF	1	2	coding_degraded	0.993	0.375
+Vaccinium_corymbosum	NC_068711	infA	1	2	coding_degraded	0.571	0.727
+Gaultheria_griffithiana	NC_057623	infA	1	2	coding_degraded	0.545	0.81
+Vaccinium_bracteatum	PQ284534	infA	1	2	coding_degraded	0.571	0.727
 Pyrola_rotundifolia	KU833271	rpl23	2	1	no_sequence		
 Pterospora_andromedea	MF120270	rpl36	1	2	coding_degraded	1.0	0.919
-Monotropa_uniflora	MT491729	rps2	1	2	coding_degraded	0.694	0.223
-Pterospora_andromedea	MF120270	rps3	1	2	coding_degraded	0.65	0.22
-Pityopus_californicus	NC_035584	rps3	1	2	coding_degraded	0.996	0.74
-Orthilia_secunda	KU588419	rps4	1	2	coding_degraded	0.229	0.804
-Monotropa_uniflora	MT491729	rps18	1	2	coding_degraded	0.465	0.267
+Monotropa_uniflora	MT491729	rps2	1	2	coding_degraded	0.691	0.216
+Pterospora_andromedea	MF120270	rps3	1	2	coding_degraded	0.674	0.213
+Pityopus_californicus	NC_035584	rps3	1	2	coding_degraded	1.032	0.726
+Monotropa_uniflora	MT491729	rps18	1	2	coding_degraded	0.456	0.267
+Vaccinium_corymbosum	NC_068711	accD	1	2	coding_degraded	0.356	0.355
+Gaultheria_griffithiana	NC_057623	accD	1	2	coding_degraded	0.336	0.304
+Vaccinium_bracteatum	PQ284534	accD	1	2	coding_degraded	0.36	0.36
+Rhododendron_ovatum	OR129260	accD	1	2	coding_degraded	0.781	0.685
 Monotropa_uniflora	MT491729	accD	2	1	no_sequence		
-Rhododendron_ovatum	OR129260	accD	1	2	coding_degraded	0.796	0.713
-Vaccinium_corymbosum	NC_068711	accD	1	2	coding_degraded	0.363	0.378
-Vaccinium_bracteatum	PQ284534	accD	1	2	coding_degraded	0.367	0.384
-Gaultheria_griffithiana	NC_057623	accD	1	2	coding_degraded	0.343	0.297
-Actinidia_eriantha	MZ959065	clpP	1	2	coding_degraded	0.568	0.385
+Actinidia_eriantha	MZ959065	clpP	1	2	coding_degraded	0.568	0.298
 Arbutus_unedo	JQ067650	clpP	2	1	no_sequence		
-Rhododendron_ovatum	OR129260	ycf1	1	2	coding_degraded	0.011	0.0
 Pyrola_rotundifolia	KU833271	ycf1	2	1	no_sequence		
-Rhododendron_ovatum	OR129260	ycf2	1	2	coding_degraded	0.427	0.347
-Vaccinium_corymbosum	NC_068711	ycf2	1	2	coding_degraded	0.417	0.305
-Vaccinium_bracteatum	PQ284534	ycf2	1	2	coding_degraded	0.419	0.272
-Gaultheria_griffithiana	NC_057623	ycf2	1	2	coding_degraded	0.408	0.44
-Pterospora_andromedea	MF120270	trnD-GUC	1	0	gene_present	1.0	0.986
-Allotropa_virgata	MF120262	trnD-GUC	1	0	gene_present	1.0	1.0
-Pityopus_californicus	NC_035584	trnD-GUC	1	0	gene_present	1.0	0.973
+Rhododendron_ovatum	OR129260	ycf1	1	2	coding_degraded	0.053	1.0
+Vaccinium_corymbosum	NC_068711	ycf2	1	2	coding_degraded	0.42	0.306
+Gaultheria_griffithiana	NC_057623	ycf2	1	2	coding_degraded	0.411	0.426
+Vaccinium_bracteatum	PQ284534	ycf2	1	2	coding_degraded	0.422	0.264
+Rhododendron_ovatum	OR129260	ycf2	1	2	coding_degraded	0.43	0.338
+Pterospora_andromedea	MF120270	trnD-GUC	1	0	gene_present	1.0	0.973
+Allotropa_virgata	MF120262	trnD-GUC	1	0	gene_present	1.0	0.986
+Pityopus_californicus	NC_035584	trnD-GUC	1	0	gene_present	1.0	0.986
 Pterospora_andromedea	MF120270	trnE-UUC	1	0	gene_present	1.014	1.0
-Allotropa_virgata	MF120262	trnE-UUC	1	0	gene_present	1.027	0.959
+Allotropa_virgata	MF120262	trnE-UUC	1	0	gene_present	1.014	0.959
 Pityopus_californicus	NC_035584	trnE-UUC	1	0	gene_present	1.014	0.959
 Pterospora_andromedea	MF120270	trnfM-CAU	1	2	rna_degraded	0.716	0.943
+Arbutus_unedo	JQ067650	trnfM-CAU	1	0	gene_present	0.986	0.973
 Allotropa_virgata	MF120262	trnfM-CAU	1	0	gene_present	1.0	0.959
 Pityopus_californicus	NC_035584	trnfM-CAU	1	2	rna_degraded	0.986	0.945
-Arbutus_unedo	JQ067650	trnfM-CAU	1	0	gene_present	0.986	0.973
-Gaultheria_griffithiana	NC_057623	trnG-GCC	1	0	gene_present	1.0	1.0
-Vaccinium_bracteatum	PQ284534	trnG-UCC	1	2	rna_degraded	0.094	0.659
-Pterospora_andromedea	MF120270	trnH-GUG	1	0	gene_present	1.0	0.96
-Allotropa_virgata	MF120262	trnH-GUG	1	2	rna_degraded	1.0	0.947
-Pityopus_californicus	NC_035584	trnH-GUG	1	0	gene_present	1.0	0.96
-Pterospora_andromedea	MF120270	trnI-CAU	1	0	gene_present	1.0	0.959
-Allotropa_virgata	MF120262	trnI-CAU	1	0	gene_present	1.0	0.986
-Pityopus_californicus	NC_035584	trnI-CAU	1	0	gene_present	1.0	0.973
-Pterospora_andromedea	MF120270	trnK-UUU	1	2	rna_degraded	1.023	0.848
-Allotropa_virgata	MF120262	trnK-UUU	1	2	rna_degraded	0.06	0.924
-Monotropa_hypopitys	KU878156	trnK-UUU	1	2	all_hits_too_long		
-Pityopus_californicus	NC_035584	trnK-UUU	1	2	rna_degraded	0.074	0.901
-Monotropa_uniflora	MT491729	trnK-UUU	1	2	rna_degraded	0.574	0.68
-Allotropa_virgata	MF120262	trnL-UAA	1	2	rna_degraded	0.248	0.874
-Pityopus_californicus	NC_035584	trnL-UAA	1	2	rna_degraded	0.204	0.944
-Allotropa_virgata	MF120262	trnL-UAG	1	2	rna_degraded	0.912	0.945
-Pityopus_californicus	NC_035584	trnL-UAG	1	0	gene_present	1.0	0.963
-Pterospora_andromedea	MF120270	trnM-CAU	1	0	gene_present	1.0	0.986
-Pterospora_andromedea	MF120270	trnN-GUU	1	2	rna_degraded	1.0	0.944
-Allotropa_virgata	MF120262	trnN-GUU	1	2	rna_degraded	1.0	0.931
-Pityopus_californicus	NC_035584	trnN-GUU	1	2	rna_degraded	1.0	0.931
-Gaultheria_griffithiana	NC_057623	trnP-UGG	1	0	gene_present	1.0	0.973
-Pterospora_andromedea	MF120270	trnQ-UUG	1	2	rna_degraded	0.861	0.984
+Gaultheria_griffithiana	NC_057623	trnG-GCC	1	0	gene_present	1.0	0.986
+Vaccinium_bracteatum	PQ284534	trnG-UCC	1	2	all_hits_too_long		
+Pterospora_andromedea	MF120270	trnH-GUG	1	2	rna_degraded	1.0	0.947
+Allotropa_virgata	MF120262	trnH-GUG	1	0	gene_present	1.0	0.96
+Pityopus_californicus	NC_035584	trnH-GUG	1	0	gene_present	1.0	0.973
+Pterospora_andromedea	MF120270	trnI-CAU	1	2	rna_degraded	1.0	0.946
+Allotropa_virgata	MF120262	trnI-CAU	1	0	gene_present	1.0	0.973
+Pityopus_californicus	NC_035584	trnI-CAU	1	0	gene_present	1.0	0.959
+Pterospora_andromedea	MF120270	trnK-UUU	1	2	all_hits_too_long		
+Allotropa_virgata	MF120262	trnK-UUU	1	2	all_hits_too_long		
+Pityopus_californicus	NC_035584	trnK-UUU	1	2	all_hits_too_long		
+Monotropa_uniflora	MT491729	trnK-UUU	1	2	all_hits_too_long		
+Allotropa_virgata	MF120262	trnL-UAA	1	2	all_hits_too_long		
+Pityopus_californicus	NC_035584	trnL-UAA	1	2	all_hits_too_long		
+Allotropa_virgata	MF120262	trnL-UAG	1	2	rna_degraded	0.912	0.959
+Pityopus_californicus	NC_035584	trnL-UAG	1	0	gene_present	1.0	0.95
+Pterospora_andromedea	MF120270	trnM-CAU	1	0	gene_present	1.0	0.973
+Pterospora_andromedea	MF120270	trnN-GUU	1	2	rna_degraded	1.0	0.931
+Allotropa_virgata	MF120262	trnN-GUU	1	2	rna_degraded	1.0	0.917
+Pityopus_californicus	NC_035584	trnN-GUU	1	2	rna_degraded	1.0	0.917
+Gaultheria_griffithiana	NC_057623	trnP-UGG	1	2	rna_degraded	0.987	0.946
+Pterospora_andromedea	MF120270	trnQ-UUG	1	2	rna_degraded	0.861	0.968
 Allotropa_virgata	MF120262	trnR-UCU	1	0	gene_present	1.0	0.972
-Pterospora_andromedea	MF120270	trnS-GCU	1	0	gene_present	1.0	0.966
-Allotropa_virgata	MF120262	trnS-GCU	1	2	rna_degraded	0.989	0.897
+Pterospora_andromedea	MF120270	trnS-GCU	1	0	gene_present	1.0	0.955
+Allotropa_virgata	MF120262	trnS-GCU	1	2	rna_degraded	0.989	0.885
 Pterospora_andromedea	MF120270	trnS-GGA	1	2	rna_degraded	1.011	0.759
 Allotropa_virgata	MF120262	trnS-GGA	1	2	rna_degraded	1.0	0.779
-Orthilia_secunda	KU588419	trnS-GGA	1	2	rna_degraded	1.011	0.77
-Allotropa_virgata	MF120262	trnS-UGA	1	2	rna_degraded	0.989	0.924
+Allotropa_virgata	MF120262	trnS-UGA	1	2	rna_degraded	0.989	0.913
 Pityopus_californicus	NC_035584	trnS-UGA	1	0	gene_present	0.989	0.957
-Pterospora_andromedea	MF120270	trnV-UAC	1	2	rna_degraded	0.556	0.899
-Pterospora_andromedea	MF120270	trnY-GUA	1	0	gene_present	1.012	0.952
-Allotropa_virgata	MF120262	trnY-GUA	1	0	gene_present	1.024	1.0
-Pityopus_californicus	NC_035584	trnY-GUA	1	0	gene_present	1.0	0.988
+Pterospora_andromedea	MF120270	trnV-UAC	1	2	all_hits_too_long		
+Pterospora_andromedea	MF120270	trnY-GUA	1	2	rna_degraded	1.012	0.94
+Allotropa_virgata	MF120262	trnY-GUA	1	0	gene_present	1.024	0.988
+Pityopus_californicus	NC_035584	trnY-GUA	1	0	gene_present	1.0	0.976
