@@ -5,6 +5,7 @@
 # 3. Extracts matching gene regions from plastid genomes
 # 4. Handles strand orientation correctly
 # 5. Appends extracted sequences to alignment files
+# 6. Produces an output .tsv with information about the recovered sequences
 ####################################################################################################
 
 # ----------------------------------------------------------
@@ -104,6 +105,9 @@ for f in os.listdir(args.genome_dir):
 # Process blast results
 # ---------------------------------------------------------------------------------------------------
 
+# list to store info from found sequences
+annotation_rows = []
+
 bigNoHitsList = []
 bigProblemFilesList = []
 
@@ -168,7 +172,7 @@ for directory in blast_folders:
                 continue
 
             # Extract reference ID (sseqid) from first hit
-            refSeqID = genome_hits[0][1]
+            refSeqID = genome_hits[0][0]
 
             # Initialize lists for parsing
             geneBounds = []
@@ -293,6 +297,18 @@ for directory in blast_folders:
                 # convert DNA sequence to a string
                 seq_str = str(subseq)
                 
+                # Record this annotation
+                annotation_rows.append({
+                    "GenomeAccession": genomeID,
+                    "Species": speciesName,
+                    "Gene": geneName,
+                    "Start": start,
+                    "End": end,
+                    "Length": len(seq_str),
+                    "Strand": strand,
+                    "ReferenceAccession": refSeqID,
+                })
+                
                 # do not write out sequences that have already been written out
                 key = (header, seq_str)
                 if key in written_seqs:
@@ -388,3 +404,42 @@ with open(problem_file_path, "w") as out:
 with open(nohits_file_path, "w") as out:
     for f in sorted(set(sum(bigNoHitsList, []))):
         out.write(f + "\n")
+        
+# ---------------------------------------------------------------------------------------------------
+# Write BLAST annotation table
+# ---------------------------------------------------------------------------------------------------
+
+annotation_path = os.path.join(args.output_dir, "../RecoveredSequences.tsv")
+
+with open(annotation_path, "w") as out:
+
+    out.write(
+        "GenomeAccession\t"
+        "Species\t"
+        "Gene\t"
+        "Start\t"
+        "End\t"
+        "Length\t"
+        "Strand\t"
+        "ReferenceAccession\n"
+    )
+
+    for row in sorted(
+        annotation_rows,
+        key=lambda x: (
+            x["Species"],
+            x["Gene"],
+            x["Start"]
+        )
+    ):
+
+        out.write(
+            f'{row["GenomeAccession"]}\t'
+            f'{row["Species"]}\t'
+            f'{row["Gene"]}\t'
+            f'{row["Start"]}\t'
+            f'{row["End"]}\t'
+            f'{row["Length"]}\t'
+            f'{row["Strand"]}\t'
+            f'{row["ReferenceAccession"]}\n'
+        )
