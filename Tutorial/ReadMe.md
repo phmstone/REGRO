@@ -155,14 +155,24 @@ The script `blastPresenceAbsence.py` does this.
 To save time and computing power, this script only uses BLAST to try and pull out genes that are annotated as pseudogenes or are missing on GenBank. Genes annotated as present are assumed to be annotated correctly.    
 This script downloads fasta files for the plastid genomes of all sequences with at least one gene annotated as missing/pseudogenised, and makes databases for BLAST from these fasta files.    
 BLAST is performed using gene sequences from "reference sequences" as queries.
+You can also choose to run REGRO in  `--fastaMode` and supply the reference sequences that you want to be used as queries directly.
 
 #### Inputs
-Reference sequences should be supplied to act as query sequences for the BLAST searches. Each of the reference sequences should all of the genes you are testing annotated as present on GenBank. Ideally they are closely related taxonomically. It is not enough to only have copies of all genes present through a combination of GenBank accessions.    
-An example file containing some GenBank IDs for sequences containing all 113 of the default angiosperm plastid genes is included (`referenceIDs.txt`)    
-The reference sequences should be identified by their GenBank IDs and the reference sequence file should have one GenBank ID per line in a .txt file. REGRO will work with as many or as few reference sequences as input, but using many reference sequences will slow down this step using BLAST.       
-If some of the sequences supplied in the original GenBank ID list for testing contain functional copies of all the genes, then this script will enable them to be used as references for BLAST, and it's not necessary to provide a file of reference sequence GenBank IDs.    
-If you are having trouble finding a GenBank accession that has all of genes you want to test annotated is present, then you could remove genes from the gene list, or run in `--fastaMode`. 
-To run in `--fastaMode` make a FASTA file containing sequences for all the genes in your gene list. Name each sequence starting with the gene name, and include any identifying information after an underscore. Do not use the "|" character in the sequence names. 
+To perform BLAST searches, REGRO requires reference sequences that have annotations for all the genes you are testing. Ideally, these reference sequences should be closely related taxonomically. 
+
+Reference sequences must be identified by their GenBank IDs and provided in a `.txt` file with one GenBank ID per line (an example file, `referenceIDs.txt`, is included containing IDs for all 113 default angiosperm plastid genes). 
+A single reference sequence must contain all the target genes; it is not sufficient to combine multiple GenBank accessions to cover the gene set. 
+REGRO works with any number of reference sequences, though using many references will slow down the BLAST step. 
+Alternatively, if your original input list already contains sequences with functional copies of all target genes, REGRO will automatically use those sequences as references without needing to provide a separate reference file.
+
+If you cannot find a single GenBank accession containing all the genes you want to test, you can either remove the missing genes from your gene list or run REGRO in `--fastaMode`. 
+
+To run in `--fastaMode`, create a FASTA file containing sequences for all the genes in your gene list. 
+Name each sequence starting with the gene name, followed by an underscore and any identifying information. 
+Do not use the "|" character anywhere in the sequence names.
+
+In this tutorial we will be supplying some reference GenBank IDs (even though it's not strictly necessary, as some of the test sequences do have all genes present).
+Running REGRO in `--fastaMode` requires more preparation, so try to find a reference GenBank ID that has functional copies of all the genes you want to test if you can.
 
 #### Outputs
 Fasta files from the GenBank sequences in the original .txt file list, BLAST directories, BLAST results, and .gb files for the "reference" sequences are all produced and organised automatically in directories.     
