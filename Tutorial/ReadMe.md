@@ -160,7 +160,7 @@ You can also choose to run REGRO in  `--fastaMode` and supply the reference sequ
 #### Inputs
 To perform BLAST searches, REGRO requires reference sequences that have annotations for all the genes you are testing. Ideally, these reference sequences should be closely related taxonomically. 
 
-Reference sequences must be identified by their GenBank IDs and provided in a `.txt` file with one GenBank ID per line (an example file, `referenceIDs.txt`, is included containing IDs for all 113 default angiosperm plastid genes). 
+Reference sequences must be identified by their GenBank IDs and provided in a `.txt` file with one GenBank ID per line (an example file, `referenceIDs.txt`, is included containing GenBank IDs for plastid genomes with all 113 default angiosperm plastid genes). 
 A single reference sequence must contain all the target genes; it is not sufficient to combine multiple GenBank accessions to cover the gene set. 
 REGRO works with any number of reference sequences, though using many references will slow down the BLAST step. 
 Alternatively, if your original input list already contains sequences with functional copies of all target genes, REGRO will automatically use those sequences as references without needing to provide a separate reference file.
