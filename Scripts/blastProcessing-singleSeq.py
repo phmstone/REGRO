@@ -118,6 +118,9 @@ genome_files = {os.path.splitext(f)[0]: os.path.join(args.genome_dir, f)
 # Process BLAST result folders
 # ---------------------------------------------------------------------------------------------------
 
+# Store recovered sequence information for TSV output
+annotation_rows = []
+
 # blast outputs are in blast directory specified on command line
 blast_folders = [os.path.join(args.blast_dir, d)
     for d in os.listdir(args.blast_dir)
@@ -164,6 +167,9 @@ for directory in blast_folders:
             if genomeID not in genome_files:
                 print(f"WARNING: Genome file for {genomeID} not found.")
                 continue
+            
+            # Get reference sequence accession from BLAST query column
+            referenceAccession = genome_hits[0][0]
 
             # --------------------------------------------------------------------------------------
             # Parse BLAST hits into structured dictionaries
@@ -271,6 +277,17 @@ for directory in blast_folders:
                 start = max(region["s_start"] - args.flanking_region - 1, 0)
                 end   = min(region["s_end"] + args.flanking_region, len(genome_seq))
                 subseq = genome_seq[start:end]
+            
+                annotation_rows.append({
+                    "GenomeAccession": genomeID,
+                    "Species": speciesName,
+                    "Gene": geneName,
+                    "Start": region["s_start"],
+                    "End": region["s_end"],
+                    "Length": len(subseq),
+                    "Strand": region["strand"],
+                    "ReferenceAccession": referenceAccession
+                })
 
                 # reverse complement sequences on the minus strand
                 if region["strand"] == "-":
@@ -351,5 +368,43 @@ if args.present_genes:
                 with open(aln_path, "a") as out:
                     SeqIO.write(new_records, out, "fasta")
 
+# ---------------------------------------------------------------------------------------------------
+# Write recovered sequence table
+# ---------------------------------------------------------------------------------------------------
+
+annotation_path = os.path.join(args.output_dir, "../RecoveredSequences.tsv")
+
+with open(annotation_path, "w") as out:
+
+    out.write(
+        "GenomeAccession\t"
+        "Species\t"
+        "Gene\t"
+        "Start\t"
+        "End\t"
+        "Length\t"
+        "Strand\t"
+        "ReferenceAccession\n"
+    )
+
+    for row in sorted(
+        annotation_rows,
+        key=lambda x: (
+            x["Species"],
+            x["Gene"],
+            x["Start"]
+        )
+    ):
+
+        out.write(
+            f'{row["GenomeAccession"]}\t'
+            f'{row["Species"]}\t'
+            f'{row["Gene"]}\t'
+            f'{row["Start"]}\t'
+            f'{row["End"]}\t'
+            f'{row["Length"]}\t'
+            f'{row["Strand"]}\t'
+            f'{row["ReferenceAccession"]}\n'
+        )
 
 print("Finished.")
