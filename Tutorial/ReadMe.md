@@ -158,7 +158,7 @@ BLAST is performed using gene sequences from "reference sequences" as queries.
 You can also choose to run REGRO in  `--fastaMode` and supply the reference sequences that you want to be used as queries directly.
 
 #### Inputs
-To perform BLAST searches, it's simplest to find some reference sequences on GenBank that have annotations for all the genes you are testing. Ideally, these reference sequences should be closely related taxonomically. 
+To perform BLAST searches, it's simplest to find some reference sequences on GenBank that have annotations for all the genes you are testing. Ideally, these reference sequences should be closely related taxonomically to the species you are investigating. 
 
 Reference sequences must be identified by their GenBank IDs and provided in a `.txt` file with one GenBank ID per line (an example file, `referenceIDs.txt`, is included containing GenBank IDs for plastid genomes with all 113 default angiosperm plastid genes). 
 A single reference sequence must contain all the target genes; it is not sufficient to combine multiple GenBank accessions to cover the gene set. 
@@ -166,7 +166,6 @@ REGRO works with any number of reference sequences, though using many references
 Alternatively, if your original input list already contains sequences with functional copies of all target genes, REGRO will automatically use those sequences as references without needing to provide a separate reference file.
 
 If you cannot find a single GenBank accession containing all the genes you want to test, you can either remove the missing genes from your gene list or run REGRO in `--fastaMode`. 
-
 To run in `--fastaMode`, create a FASTA file containing sequences for all the genes in your gene list. 
 Name each sequence starting with the gene name, followed by an underscore and any identifying information. 
 Do not use the "|" character anywhere in the sequence names.
@@ -303,10 +302,9 @@ python3 heatMapPlot.py --input updatedPA.tsv --output EricalesHeatMap-updated.pn
 ``` 
 The example updated heatmap for the dataset used in this tutorial can be found [here](https://github.com/phmstone/REGRO/blob/main/Tutorial/exampleOutputs/EricalesHeatMap-updated.png).
 
-Compare the differences between the two heatmaps. Using REGRO in discovery mode allowed many more tRNA genes and gene fragments to be found, as well as a few other genes.
-
 
 ## Pipeline Complete!
 
-
+Compare the differences between the two heatmaps. Using REGRO in discovery mode allowed many more genes and gene fragments to be found, across the autotrophic taxa as well as the heterotrophic taxa.
+Most of the change can be seen in the tRNA genes, check the change log file in order to look into which genes and taxa had their gene "statuses" changed the most.
 
