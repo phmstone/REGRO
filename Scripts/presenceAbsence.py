@@ -174,7 +174,7 @@ except Exception as e:
 print(f"Number of sequences read: {len(records)}")
 
 # --------------------------------------------------------------------------------------------------------------
-# Remove sequences without gene annotations
+# Keep sequences without gene annotations, but print a warning
 # --------------------------------------------------------------------------------------------------------------
 
 # if a .gbk file has no genes present as features then there is a problem
@@ -188,13 +188,9 @@ for key, seq_record in records.items():
     if not has_gene:
         no_gene_list.append(key)
 
-# remove sequences records from the dictionary if there is no gene        
-for key in no_gene_list:
-    records.pop(key)
-
 # print the genbank IDs that have no gene annotations if there are any
 if len(no_gene_list) > 0:
-    print(f"Removed {len(no_gene_list)} sequences with no gene annotations: {no_gene_list}")
+    print(f"There are {len(no_gene_list)} sequences with no gene annotations: {no_gene_list}")
     print("Check the GenBank file to see if an alias file is needed to accmmodate alternative gene names for these taxa.")
 # print the number of sequences moving forward
 print(f"Remaining sequences: {len(records)}")
