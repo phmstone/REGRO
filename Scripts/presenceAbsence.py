@@ -205,6 +205,7 @@ taxa_names = []
 genbank_ids = []
 all_present_genes = []
 all_pseudogenes = []
+multi_accession_log = []
 
 # loop over taxa in the dictionary 
 for recordID, record in records.items():
@@ -262,39 +263,125 @@ for recordID, record in records.items():
         # Storing sequences for profiles and writing out to multifastas
         # -----------------------------------------------------------------------------------------------------------
 
+        # Pre-define start and end safely for all location types
+        start, end = sorted([int(feature.location.start), int(feature.location.end)])
+
+        # Make a multi-accession flag (reset for each new feature)
+        is_multi_accession = False
+
         try:
             extracted_seq = str(feature.extract(record.seq))
-        # Sometimes exons found in other GenBank accessions are referenced in accessions
-        # This won't work at the moment so skip these accessions entirely
+            
         except ValueError as error:
-            if "another sequence" in str(error):
-                print(f"\nWARNING: GenBank record {recordID} references another accession.")
-                print("This genome is not self-contained and will be skipped.")
-                skip_record = True
-                break
+            if "another sequence" in str(error) or "references mandatory" in str(error):
+                # Attempt to manually resolve multi-accession / trans-spliced exons
+                extracted_pieces = []
+                try:
+                    parts = getattr(feature.location, "parts", [feature.location])
+                    sub_seq_failed = False
+                    
+                    for part in parts:
+                        part_seq = ""
+                        target_seq_obj = None
+                        
+                        # Determine if this part references another accession
+                        ref_acc = None
+                        if hasattr(part, "ref") and part.ref:
+                            ref_acc = part.ref
+                        else:
+                            # Fallback: check string representation of the part for accession pattern
+                            part_str = str(part)
+                            match = re.search(r'([A-Z]+\d+\.\d+):', part_str)
+                            if match:
+                                ref_acc = match.group(1)
+                                
+                        if ref_acc and ref_acc != record.id:
+                            if ref_acc in records:
+                                target_seq_obj = records[ref_acc].seq
+                            else:
+                                sub_seq_failed = True
+                                break
+                        else:
+                            target_seq_obj = record.seq
+                            
+                        # Extract coordinates safely using integer start/end of the part
+                        p_start = int(part.start)
+                        p_end = int(part.end)
+                        
+                        sub_seq = str(target_seq_obj[p_start:p_end])
+                        
+                        # Handle strand orientation
+                        if part.strand == -1:
+                            from Bio.Seq import Seq
+                            sub_seq = str(Seq(sub_seq).reverse_complement())
+                            
+                        extracted_pieces.append(sub_seq)
+                        
+                    # If the other half of a multi accession trans-spliced sequence isn't downloaded
+                    if sub_seq_failed:
+                        raise ValueError("Remote accession not found in input file")
+                        
+                    extracted_seq = "".join(extracted_pieces)
+                    start, end = sorted([int(feature.location.start), int(feature.location.end)])
+                    
+                    # Raise flag for successfully joining exons from different accessions
+                    is_multi_accession = True
+                    
+                    # Get information on the multi accession joins for a log file
+                    # Empty list to collect all individual accession identifiers referenced by  split exons/parts of multi-accession feature.
+                    used_accessions = []
+                    
+                    for p in parts:
+                        # Check if the location part stores a cross-reference accession
+                        part_ref = getattr(p, "ref", None)
+                        if part_ref:
+                            # If it does, append it
+                            used_accessions.append(part_ref)
+                        else:
+                            # If can't find a cross-ref, then use a regular expression to search for a standard GenBank accession pattern.
+                            match_acc = re.search(r'([A-Z]+\d+(?:\.\d+)?)', str(p))
+                            # make sure match is genuine and that it is not the same as the current GenBank ID
+                            if match_acc and match_acc.group(1) != recordID:
+                                used_accessions.append(match_acc.group(1))
+                            else:
+                                # Default back to the primary record ID if no external accession identifier is detected
+                                used_accessions.append(recordID)
+                    
+                    # remove duplicate accessions and sort the remaining ones
+                    used_accessions = sorted(list(set(used_accessions)))
+                    
+                    # information for the sequence names and multi accession log file
+                    multi_accession_log.append({
+                        "species": taxon_name,
+                        "genbankID": recordID,
+                        "gene": canonical_name,
+                        "accessions_joined": ", ".join(used_accessions)
+                    })
+                    
+                except Exception as inner_err:
+                    print(f"\nWARNING: Could not resolve cross-accession feature for {recordID} ({canonical_name}): {inner_err}")
+                    skip_record = True
+                    break
             else:
                 raise
-            
-        start, end = sorted([int(feature.location.start), int(feature.location.end)])
 
          # Pseudogenes
         if is_pseudo:
             if canonical_name not in pseudogene_candidates or len(extracted_seq) > len(pseudogene_candidates[canonical_name][0]):
-                pseudogene_candidates[canonical_name] = (extracted_seq, start, end)
+                pseudogene_candidates[canonical_name] = (extracted_seq, start, end, is_multi_accession)
             continue
 
         # Full gene sequence (only type "gene")
         if feature.type == "gene":
             # store the gene if first time seen, if the name has been seen before then keep the longer copy
             if canonical_name not in full_gene_candidates or len(extracted_seq) > len(full_gene_candidates[canonical_name][0]):
-                full_gene_candidates[canonical_name] = (extracted_seq, start, end)
+                full_gene_candidates[canonical_name] = (extracted_seq, start, end, is_multi_accession)
 
         # Coding sequence (CDS/tRNA/rRNA)
         if feature.type in {"CDS", "tRNA", "rRNA"}:
-            extracted_seq = str(feature.extract(record.seq))
             # store both sequence and feature for exon extraction
             if canonical_name not in coding_gene_candidates or len(extracted_seq) > len(coding_gene_candidates[canonical_name][0]):
-                coding_gene_candidates[canonical_name] = (extracted_seq, feature)
+                coding_gene_candidates[canonical_name] = (extracted_seq, feature, is_multi_accession)
 
     # skip the sequences that refer to other sequences
     if skip_record:
@@ -317,7 +404,7 @@ for recordID, record in records.items():
     # make a list for genes that have been written out to file
     written_full = set()
     # loop through the dictionary created earlier
-    for cname, (seq, start, end) in full_gene_candidates.items():
+    for cname, (seq, start, end, multi_flag) in full_gene_candidates.items():
         # unique ID for each gene
         key = (cname, start, end)
         # skip exact duplicates (sometimes tRNA and rRNA are written as two features)
@@ -328,15 +415,19 @@ for recordID, record in records.items():
         out_file = os.path.join(args.outdir, f"{cname}_alignment_unaligned.fasta")
         with open(out_file, "a") as fh:
             # include the genbank ID, species name, and gene coordinates
-            fh.write(f">{recordID} : {cname} {start}-{end}\n")
+            if multi_flag:
+                fh.write(f">{recordID} : {cname} {start}-{end} [MULTI-ACCESSION]\n")
+            else:
+                fh.write(f">{recordID} : {cname} {start}-{end}\n")
             fh.write(seq + "\n")
+
 
     # make a list for CDS that have been written out to file
     written_coding = set()
     # CDS is optional but full multifastas (above) is innate
     if args.coding_outdir:
         # loop through the dictionary created earlier
-        for cname, (seq, feature_obj) in coding_gene_candidates.items():
+        for cname, (seq, feature_obj, multi_flag) in coding_gene_candidates.items():
             start, end = sorted([int(feature_obj.location.start), int(feature_obj.location.end)])
             # unique ID for each gene
             key = (cname, start, end)
@@ -355,13 +446,10 @@ for recordID, record in records.items():
             # write out the file
             out_file = os.path.join(args.coding_outdir, f"{cname}_coding_unaligned.fasta")
             with open(out_file, "a") as fh:
-                # include the genbank ID, species name, and exon boundaries
-                fh.write(f">{recordID} : {cname} exons={exon_str}\n")
-                try:
-                    seq = str(feature_obj.extract(record.seq))
-                # if exons outside this genbank accession are refered to, then skip this ID  
-                except ValueError:
-                    continue
+                if multi_flag:
+                    fh.write(f">{recordID} : {cname} exons={exon_str} [MULTI-ACCESSION]\n")
+                else:
+                    fh.write(f">{recordID} : {cname} exons={exon_str}\n")
                 fh.write(seq + "\n")
 
     # writing out pseudogenes is also optional
@@ -425,5 +513,40 @@ if args.tsv:
         for i in range(len(taxa_names)):
             f.write(f"{taxa_names[i]}\t{genbank_ids[i]}\t" + "\t".join(gene_profiles[i]) + "\n")
     print(f"TSV file written: {args.tsv}")
+
+# --------------------------------------------------------------------------------------------------------------
+# Write multi-accession join log
+# --------------------------------------------------------------------------------------------------------------
+
+if multi_accession_log:
+    join_log_file = "multiAccessionJoins.tsv"
+    import csv
+    
+    # Filter out entries where the genbankID is the only thing listed in accessions_joined and only keep unique rows.
+    seen = set()
+    unique_log = []
+    for row in multi_accession_log:
+        # Split the comma-separated accessions back into an individual list of strings
+        joined_items = [acc.strip() for acc in row["accessions_joined"].split(",")]
+        # See what was joined besides the main ID
+        other_accessions = [acc for acc in joined_items if acc != row["genbankID"]]
+        
+        # Only log if there are actual external accessions linked
+        if other_accessions:
+            row["accessions_joined"] = ", ".join(other_accessions)
+            row_tuple = tuple(sorted(row.items()))
+            # Only log each unique combination once
+            if row_tuple not in seen:
+                seen.add(row_tuple)
+                unique_log.append(row)
+    # write out the file
+    if unique_log:
+        with open(join_log_file, "w", newline="") as f:
+            writer = csv.DictWriter(f, fieldnames=["species", "genbankID", "gene", "accessions_joined"], delimiter="\t")
+            writer.writeheader()
+            writer.writerows(unique_log)
+        print(f"Multi-accession join report written: {join_log_file}")
+    else:
+        print("No external multi-accession joins found to log.")
 
 print("Processing complete.")
