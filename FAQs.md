@@ -36,17 +36,22 @@ The easiest way to see this by making a heat map figure, or by summing up the to
 It's possible that this GenBank accession is not very well annotated, so even though genes are present they are not annotated and will not be recognised by the first part of the pipeline. 
 Alternative gene names may also have been used to annotate this accession, have a look at the GenBank file and make an alias file if this is the case.
 
-### I want to use the pipeline but my sequences aren't on GenBank. Will it still work?
+### I want to use REGRO but my sequences aren't on GenBank. Will it still work?
 Yes, as long as you have copies of the sequences in .fasta and .gbk format with the same name (except for the file extension). 
 Put your own sequences in the folders where they would go had they been on genbank. 
 It may be easier to run the pipeline through once with sequences from genbank in order to see where to put your own.
 
-### Will this pipeline recover genes with trans-spliced introns?
+### Will REGRO recover genes with trans-spliced introns?
 In angiosperm chloroplast genomes, _rps12_ is the only gene with trans-spliced introns. 
 Alignments for genes with trans-spliced will take more manual curation, but if `blastProcessing.py` is used then the full sequence should be recovered.
 If `blastProcessing-singleSeq.py` is used, then the whole gene will not be recovered, as this script extracts the longest sequence for each taxon the different exon(s) could be extracted from different sequences. 
-If the different exons for the gene are located in different chromosomes (i.e. have different GenBank IDs) then this script will skip over those sequences and not recover the genes. 
-This should only be a problem for mitochondrial sequences.
+If the different exons for the gene are located in different chromosomes (i.e. have different GenBank IDs) then this script will recover the full genes sequences as long as all the GenBank IDs referred to were downloaded. 
+
+### Will REGRO recover genes split across multiple accessions?
+Yes, as long as all GenBank records that are cross-referenced are downloaded. 
+After running `PresenceAbsence.py` on GenBank accessions that exons from the same genes spread throughout them a log file is produced.
+This log file shows which GenBank accessions cross-reference each other. 
+You should keep this in mind when evaluating the alignments: you will have to join sequences from different accessions together in order recover the full gene sequence, and accurately evaluate gene presence for each species.
 
 ### How accurate is the updated presence/absence .tsv?
 The .tsv output `UpdateTSV.py` from will not be an accurate assessment of whether genes found are present in full if the alignments are used straight from `aligner.py`, manual inspection and editing is likely necessary. 
