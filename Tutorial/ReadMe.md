@@ -129,6 +129,8 @@ The example original presence/absence .tsv for the dataset in this tutorial can 
 
 ## IV. Visualising gene presence/absence (optional)
 
+This is the final step of running REGRO in GenBank mode (GenBank mode bases presence/absence on GenBank annotations alone).
+
 The output presence/absence .tsv file generated in the previous step can be hard to understand visually.    
 Use `heatMapPlot.py` to create a "heatmap" style figure showing which genes are present, missing, and pseudogenised.
 If no output file name is given then the image will be named `heatMapPlot.png`.     
@@ -149,6 +151,8 @@ Note the amount of grey (pseudogenes) present for the partially mycoheterotrophi
 
 
 ## V. Finding other sequences with BLAST
+
+You are now entering discovery mode, which uses BLAST to find additional genes or gene fragments that might not have been annotated on GenBank.
 
 Sometimes not all the genes present in a genome are successfully annotated, this is especially true for pseudogenes. With BLAST we can uncover genes that may have been missed by the original annotation method, or not included in the final version of the genome on GenBank for some other reason.     
 The script `blastPresenceAbsence.py` does this.
