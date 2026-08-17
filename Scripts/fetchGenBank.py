@@ -40,7 +40,9 @@ parser.add_argument(
     help="Output GenBank file (.gbk)")
 
 # user can give their own time delay between requesting .gbk downloads from genbank if they want
-# 1s is the default 
+# 1s is the default (conservative)
+# supposedly up to 3 per second is fine without a key, and up to 10 per second is fine with a key
+# a key is just the account, which is why an email needs to be registered
 parser.add_argument(
     "--delay",
     type=float,
@@ -68,7 +70,9 @@ print(f"Total unique IDs accessions found: {len(genbank_ids)}")
 # -----------------------------
 # Download records
 # -----------------------------
-print("1 s delay between requests so genbank does not crash")
+
+# Need to introduce delays between requests so GenBank does not crash
+print("Delay between requests prevents server overload")
 
 # putting the output file in the output directory made in the above chunk (if does not already exist)
 output_file = os.path.join(args.output)
